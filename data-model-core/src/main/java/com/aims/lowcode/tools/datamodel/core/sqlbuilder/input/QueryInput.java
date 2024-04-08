@@ -26,34 +26,34 @@ public class QueryInput {
     public String buildSql() {
         StringBuilder sql = new StringBuilder("SELECT ");
         if (distinct) {
-            sql.append("DISTINCT ");
+            sql.append(" DISTINCT ");
         }
         DataViewAliasMap aliasMap = from.getAliasMap();
 
         sql.append(buildColumnsSql(aliasMap)).append(" ");
-        sql.append("FROM ").append(from.getMainTable()).append(" as m");
+        sql.append(" FROM ").append(from.getMainTable()).append(" as m");
 
         if (from.getJoins() != null) {
             for (DataViewJoin join : from.getJoins()) {
                 sql.append(join.buildJoinSql(aliasMap)).append(" ");
             }
         }
-        sql.append("WHERE 1=1 ");
+        sql.append( " WHERE 1=1 ");
         if (from.getConditions() != null && !from.getConditions().isEmpty()) {
-            sql.append("AND (").append(buildMainConditionsSql(from.getConditions())).append(") ");
+            sql.append(" AND (").append(buildMainConditionsSql(from.getConditions())).append(") ");
         }
 
         if (conditions != null && !conditions.isEmpty()) {
-            sql.append("AND (").append(buildMainConditionsSql(conditions)).append(") ");
+            sql.append(" AND (").append(buildMainConditionsSql(conditions)).append(") ");
         }
 
 
         if (groupBy != null && !groupBy.getColumns().isEmpty()) {
-            sql.append("GROUP BY ").append(groupBy.buildGroupBySql()).append(" ");
+            sql.append(" GROUP BY ").append(groupBy.buildGroupBySql()).append(" ");
         }
 
         if (having != null && !having.getConditions().isEmpty()) {
-            sql.append("HAVING ").append(having.generateHavingSql(from.getAliasMap())).append(" ");
+            sql.append(" HAVING ").append(having.generateHavingSql(from.getAliasMap())).append(" ");
         }
 
         if (orderBy != null && !orderBy.getColumns().isEmpty()) {
@@ -63,7 +63,7 @@ public class QueryInput {
         // 添加分页逻辑
         if (page != 0) {
             long offset = (page - 1) * pageSize;
-            sql.append("LIMIT ").append(pageSize).append(" OFFSET ").append(offset);
+            sql.append(" LIMIT ").append(pageSize).append(" OFFSET ").append(offset);
         }
 
         return sql.toString();
