@@ -1,0 +1,78 @@
+{
+  "from": {
+    "mainTable": "logic_instance",
+    "conditions": [
+      {
+        "alias": "logicId",
+        "operator": "not null"
+      }
+    ],
+    "joins": [
+      {
+        "type": "LEFT",
+        "tableAlias": "l",
+        "on": [
+          {
+            "alias1": "logicId",
+            "type": "=",
+            "alias2": "logic_id"
+          }
+        ]
+      }
+    ],
+    "aliasMap": {
+      "columnMap": {
+        "id": {
+          "tableAlias": "d"
+        },
+        "logic_id": {
+          "tableAlias": "l",
+          "columnName": "id"
+        },
+        "logicId": {
+          "tableAlias": "d"
+        },
+        "logicName": {
+          "tableAlias": "l",
+          "columnName": "name"
+        },
+        "bizId": {
+          "tableAlias": "d"
+        },
+        "serverTime": {
+          "tableAlias": "d"
+        }
+      },
+      "tableMap": {
+        "d": {
+          "table": "logic_instance"
+        },
+        "l": {
+          "table": "logic"
+        }
+      }
+    }
+  },
+  "conditions": [
+    {
+      "alias": "bizId",
+      "operator": "=",
+      "value": "1"
+    },
+    {
+      "alias": "logicName",
+      "operator": "like",
+      "value": "测试"
+    }
+  ],
+  "page": 1,
+  "pageSize": 10,
+  "orderBy": {
+    "columns": [
+      {
+        "alias": "serverTime",
+        "direction": "DESC"
+      }
+    ]
+  }
+}

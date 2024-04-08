@@ -1,0 +1,94 @@
+{
+  "selects": [
+    {
+      "column": "id"
+    },
+    {
+      "column": "logicName"
+    }
+  ],
+  "from": {
+    "mainTable": "logic_instance",
+    "conditions": [
+      {
+        "column": "logicId",
+        "operator": "not null"
+      }
+    ],
+    "joins": [
+      {
+        "type": "LEFT",
+        "table": "logic",
+        "on": [
+          {
+            "column1": "logicId",
+            "type": "=",
+            "column2": "logic_id"
+          }
+        ]
+      }
+    ],
+    "aliasMap": {
+      "columnMaps": [
+        {
+          "alias": "id",
+          "table": "m"
+        },
+        {
+          "alias": "logic_id",
+          "table": "logic",
+          "column": "id"
+        },
+        {
+          "alias": "logicId",
+          "table": "m"
+        },
+        {
+          "alias": "logicName",
+          "table": "logic",
+          "column": "name"
+        },
+        {
+          "alias": "bizId",
+          "table": "m"
+        },
+        {
+          "alias": "serverTime",
+          "table": "m"
+        }
+      ],
+      "tableMaps": [
+        {
+          "alias": "d",
+          "table": "logic_instance"
+        },
+        {
+          "alias": "logic",
+          "table": "logic"
+        }
+      ]
+    }
+  },
+  "conditions": [
+    {
+      "column": "bizId",
+      "operator": "=",
+      "value": "1"
+    },
+    {
+      "column": "logicName",
+      "operator": "like",
+      "value": "测试"
+    }
+  ],
+  "page": 1,
+  "pageSize": 10,
+  "orderBy": {
+    "columns": [
+      {
+        "column": "serverTime",
+        "direction": "DESC"
+      }
+    ]
+  }
+}
