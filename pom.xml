@@ -7,7 +7,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.2</version>
     </parent>
-    <groupId>com.aims.lowcode.tools</groupId>
+    <groupId>com.aims.datamodel</groupId>
     <artifactId>data-model-solution</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -32,14 +32,32 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <name>科大智联镜像仓库</name>
+            <url>https://nexus.aimstek.cn/repository/maven-public</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <!--稳定版本不会频繁修改的jar的存储位置-->
+            <id>nexus-releases</id>
+            <url>https://nexus.aimstek.cn/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <!--快照版本-->
+            <id>nexus-snapshots</id>
+            <url>https://nexus.aimstek.cn/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <!--    <build>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.springframework.boot</groupId>-->
+    <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
 
 </project>

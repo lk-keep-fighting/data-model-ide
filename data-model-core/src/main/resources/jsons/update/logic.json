@@ -1,0 +1,17 @@
+{
+  "value": {
+    "name": "测试",
+    "module": "tst"
+  },
+  "dataModel": {
+    "mainTable": "logic"
+  },
+  "id": "'1'",
+  "conditions": [
+    {
+      "column": "name",
+      "operator": "like",
+      "value": "2"
+    }
+  ]
+}

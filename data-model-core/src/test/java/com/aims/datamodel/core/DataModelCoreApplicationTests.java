@@ -1,0 +1,82 @@
+package com.aims.datamodel.core;
+
+import com.aims.datamodel.core.sqlbuilder.QueryBuilder;
+import com.aims.datamodel.core.sqlbuilder.InsertBuilder;
+import com.aims.datamodel.core.sqlbuilder.UpdateBuilder;
+import com.aims.datamodel.core.sqlbuilder.input.InsertInput;
+import com.aims.datamodel.core.sqlbuilder.input.UpdateInput;
+import com.alibaba.fastjson2.JSONObject;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest
+class DataModelCoreApplicationTests {
+
+    @Test
+    void contextLoads() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/query/simple.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        var sql = QueryBuilder.buildByJson(json);
+        System.out.println(sql);
+        String expected = "SELECT m.id AS id, logic.`name` AS logicName  FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.`id`  WHERE 1=1  AND (m.logicId  IS NOT NULL)  AND (m.bizId = '1' AND logic.`name`  LIKE '%测试%') ORDER BY m.serverTime DESC  LIMIT 10 OFFSET 0";
+        assertEquals(expected, sql);
+    }
+
+    @Test
+    void testInsert() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/insert/logic.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        InsertInput input = JSONObject.parseObject(json, InsertInput.class);
+        var sql = InsertBuilder.buildByInput(input);
+//        assertEquals("SELECT m.id AS id, logic.name AS logicName FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.id WHERE 1=1 AND (m.logicId  IS NOT NULL) AND (m.bizId = '1' AND logic.name  LIKE '%测试%') ORDER BY m.serverTime DESC LIMIT 10 OFFSET 0", sql);
+        System.out.println(sql);
+    }
+
+    //    @Test
+    void testBatchInsert() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/insert/logics.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        InsertInput input = JSONObject.parseObject(json, InsertInput.class);
+        var sql = InsertBuilder.buildBatchByInput(input);
+        for (int i = 0; i < sql.stream().count(); i++) {
+            System.out.println(sql.get(i));
+        }
+//        assertEquals("SELECT m.id AS id, logic.name AS logicName FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.id WHERE 1=1 AND (m.logicId  IS NOT NULL) AND (m.bizId = '1' AND logic.name  LIKE '%测试%') ORDER BY m.serverTime DESC LIMIT 10 OFFSET 0", sql);
+    }
+
+    @Test
+    void testUpdate() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/update/logic.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        UpdateInput input = JSONObject.parseObject(json, UpdateInput.class);
+        var sql = UpdateBuilder.buildByInput(input);
+//        assertEquals("SELECT m.id AS id, logic.name AS logicName FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.id WHERE 1=1 AND (m.logicId  IS NOT NULL) AND (m.bizId = '1' AND logic.name  LIKE '%测试%') ORDER BY m.serverTime DESC LIMIT 10 OFFSET 0", sql);
+        System.out.println(sql);
+    }
+}

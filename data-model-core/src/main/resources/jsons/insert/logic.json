@@ -1,0 +1,9 @@
+{
+  "value": {
+    "id": "1",
+    "name": "测试"
+  },
+  "dataModel": {
+    "mainTable": "logic"
+  }
+}
