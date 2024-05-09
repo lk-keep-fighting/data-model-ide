@@ -10,11 +10,11 @@ public class QueryBuilder {
     }
 
     public static String build(QueryInput input) {
-        return input.buildSql();
+        return input.buildPageSql();
     }
 
     public static String buildByJson(String inputJson) {
         QueryInput input = JSONObject.parseObject(inputJson, QueryInput.class);
-        return input.buildSql();
+        return input.buildPageSql();
     }
 }

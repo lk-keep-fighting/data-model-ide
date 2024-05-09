@@ -1,10 +1,18 @@
 {
   "value": {
-    "name": "测试",
+    "name1": "测试",
     "module": "tst"
   },
   "dataModel": {
-    "mainTable": "logic"
+    "mainTable": "logic",
+    "aliasMap": {
+      "columnMaps": [
+        {
+          "column": "name",
+          "alias": "name1"
+        }
+      ]
+    }
   },
   "id": "'1'",
   "conditions": [

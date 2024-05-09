@@ -5,15 +5,19 @@ import com.aims.datamodel.core.dsl.DataViewAliasMap;
 import com.aims.datamodel.core.dsl.DataViewCondition;
 import com.aims.datamodel.core.dsl.DataViewJoin;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@Accessors(chain = true)
 public class QueryInput {
 
     private boolean distinct;
+    private List<String> ids;
     private List<Column> selects;
     private DataModel from;
     private List<DataViewCondition> conditions;
@@ -23,7 +27,7 @@ public class QueryInput {
     private Having having;
     private OrderBy orderBy;
 
-    public String buildSql() {
+    public String buildPageSql() {
         StringBuilder sql = new StringBuilder("SELECT ");
         if (distinct) {
             sql.append(" DISTINCT ");
@@ -38,11 +42,13 @@ public class QueryInput {
                 sql.append(join.buildJoinSql(aliasMap)).append(" ");
             }
         }
-        sql.append( " WHERE 1=1 ");
+        sql.append(" WHERE 1=1 ");
         if (from.getConditions() != null && !from.getConditions().isEmpty()) {
             sql.append(" AND (").append(buildMainConditionsSql(from.getConditions())).append(") ");
         }
-
+        if (ids != null && !ids.isEmpty()) {
+            sql.append(" AND m.id IN (").append(ids.stream().map(id -> "'" + id + "'").collect(Collectors.joining(","))).append(") ");
+        }
         if (conditions != null && !conditions.isEmpty()) {
             sql.append(" AND (").append(buildMainConditionsSql(conditions)).append(") ");
         }
@@ -69,6 +75,18 @@ public class QueryInput {
         return sql.toString();
     }
 
+    public String convertPageSqlToCountSql(String pageSql) {
+        int fromIdx = pageSql.indexOf("FROM");
+        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ");
+        countSql.append(pageSql.substring(fromIdx));
+        int limitIdx = countSql.indexOf("LIMIT");
+        if (limitIdx != -1) {
+            countSql.delete(limitIdx, countSql.length());
+        }
+        return countSql.toString();
+    }
+
+
     public String buildMainConditionsSql(List<DataViewCondition> conditions) {
         StringBuilder sql = new StringBuilder();
         for (var condition : conditions) {
@@ -78,8 +96,19 @@ public class QueryInput {
     }
 
     public String buildColumnsSql(DataViewAliasMap aliasMap) {
-        if (selects == null || selects.isEmpty()) return " * ";
-        var sql = selects.stream().map(column -> aliasMap.getColumnSql(column.getColumn()) + " AS " + column.getColumn()).collect(Collectors.joining(", "));
+        var dmClms = from.getColumns();
+        if (selects == null || selects.isEmpty()) {
+            if (dmClms == null)
+                return " * ";
+            else {
+                if (selects == null)
+                    selects = new ArrayList<>();
+                dmClms.forEach(dmClm -> {
+                    selects.add(new Column(dmClm.getColumn()));
+                });
+            }
+        }
+        var sql = selects.stream().map(column -> aliasMap.getColumnSql(column.getColumn()) + " AS `" + column.getColumn() + "`").collect(Collectors.joining(", "));
         if (StringUtils.hasText(sql)) {
             return sql;
         } else return " * ";

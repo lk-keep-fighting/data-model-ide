@@ -12,7 +12,7 @@
     "conditions": [
       {
         "column": "logicId",
-        "operator": "not null"
+        "operator": "is not null"
       }
     ],
     "joins": [

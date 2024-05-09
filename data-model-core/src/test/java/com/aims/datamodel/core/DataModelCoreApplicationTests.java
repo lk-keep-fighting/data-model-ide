@@ -28,9 +28,24 @@ class DataModelCoreApplicationTests {
             e.printStackTrace();
         }
         var sql = QueryBuilder.buildByJson(json);
-        System.out.println(sql);
-        String expected = "SELECT m.id AS id, logic.`name` AS logicName  FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.`id`  WHERE 1=1  AND (m.logicId  IS NOT NULL)  AND (m.bizId = '1' AND logic.`name`  LIKE '%测试%') ORDER BY m.serverTime DESC  LIMIT 10 OFFSET 0";
+        System.out.println("buildsql:" + sql);
+        String expected = "SELECT m.`id` AS `id`, logic.`name` AS `logicName`  FROM logic_instance as m LEFT JOIN logic logic ON m.`logicId` = logic.`id`  WHERE 1=1  AND (m.`logicId`  IS NOT NULL)  AND (m.`bizId` = '1' AND logic.`name`  LIKE '%测试%') ORDER BY m.`serverTime` DESC  LIMIT 10 OFFSET 0";
+        System.out.println("expected:" + expected);
         assertEquals(expected, sql);
+    }
+
+    @Test
+    void testSimple2Json() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/query/simple2.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        var sql = QueryBuilder.buildByJson(json);
+        System.out.println(sql);
+
     }
 
     @Test
@@ -79,4 +94,5 @@ class DataModelCoreApplicationTests {
 //        assertEquals("SELECT m.id AS id, logic.name AS logicName FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.id WHERE 1=1 AND (m.logicId  IS NOT NULL) AND (m.bizId = '1' AND logic.name  LIKE '%测试%') ORDER BY m.serverTime DESC LIMIT 10 OFFSET 0", sql);
         System.out.println(sql);
     }
+
 }

@@ -28,16 +28,6 @@ public class DataViewAliasMap {
         }
     }
 
-    public String getTablePrimaryKeySql(String alias) {
-        if (tableMaps == null) return alias + ".id";
-        Optional<DataViewTableAliasMap> tableMap = tableMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
-        if (tableMap.isPresent()) {
-            return tableMap.get().getPrimaryKeySql();
-        } else {
-            return alias + ".id";
-        }
-    }
-
     public String getTableSql(String alias) {
         if (tableMaps == null) return alias;
         Optional<DataViewTableAliasMap> tableMap = tableMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
@@ -49,12 +39,12 @@ public class DataViewAliasMap {
     }
 
     public String getColumnSql(String alias) {
-        if (columnMaps == null) return alias;
+        if (columnMaps == null)  return "`" + alias + "`";
         Optional<DataViewColumnAliasMap> columnMap = columnMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
         if (columnMap.isPresent()) {
             return columnMap.get().getFullSqlName();
         } else {
-            return alias;
+            return "`" + alias + "`";
         }
     }
 }

@@ -1,0 +1,50 @@
+{
+  "distinct": true,
+  "ids": [
+    "1",
+    "2"
+  ],
+  "selects": [
+    {
+      "column": "taskId"
+    },
+    {
+      "column": "date"
+    },
+    {
+      "column": "`from`"
+    },
+    {
+      "column": "`to`"
+    },
+    {
+      "column": "taskCode"
+    }
+  ],
+  "conditions": [
+    {
+      "column": "taskCode",
+      "operator": "in",
+      "values": [
+        "'taskcode'"
+      ]
+    },
+    {
+      "column": "taskId",
+      "operator": "not like",
+      "value": [
+        "%已完成%"
+      ]
+    }
+  ],
+  "page": 1,
+  "pageSize": 10000,
+  "orderBy": {
+    "columns": [
+      {
+        "column": "date",
+        "direction": "asc"
+      }
+    ]
+  }
+}

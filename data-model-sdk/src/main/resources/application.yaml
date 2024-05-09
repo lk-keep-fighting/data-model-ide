@@ -6,3 +6,6 @@ spring:
     password: 12#$qwER
 data-model:
   config-dir: ../data-model-configs
+logging:
+  level:
+    debug: debug

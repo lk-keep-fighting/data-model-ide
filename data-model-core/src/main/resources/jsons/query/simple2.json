@@ -1,77 +1,51 @@
 {
   "from": {
-    "mainTable": "logic_instance",
-    "conditions": [
-      {
-        "alias": "logicId",
-        "operator": "not null"
-      }
-    ],
-    "joins": [
-      {
-        "type": "LEFT",
-        "tableAlias": "l",
-        "on": [
-          {
-            "alias1": "logicId",
-            "type": "=",
-            "alias2": "logic_id"
-          }
-        ]
-      }
-    ],
-    "aliasMap": {
-      "columnMap": {
-        "id": {
-          "tableAlias": "d"
-        },
-        "logic_id": {
-          "tableAlias": "l",
-          "columnName": "id"
-        },
-        "logicId": {
-          "tableAlias": "d"
-        },
-        "logicName": {
-          "tableAlias": "l",
-          "columnName": "name"
-        },
-        "bizId": {
-          "tableAlias": "d"
-        },
-        "serverTime": {
-          "tableAlias": "d"
-        }
-      },
-      "tableMap": {
-        "d": {
-          "table": "logic_instance"
-        },
-        "l": {
-          "table": "logic"
-        }
-      }
-    }
+    "mainTable": "biz_task_log"
   },
-  "conditions": [
+  "selects": [
     {
-      "alias": "bizId",
-      "operator": "=",
-      "value": "1"
+      "column": "taskId"
     },
     {
-      "alias": "logicName",
-      "operator": "like",
-      "value": "测试"
+      "column": "date"
+    },
+    {
+      "column": "taskCode"
+    }
+  ],
+  "conditions": [
+    {
+      "column": "taskId",
+      "operator": "not like",
+      "value":"%已完成%"
+    },
+    {
+      "column": "devId",
+      "operator": "=",
+      "value": "_par.deviceId"
+    },
+    {
+      "operator": "or",
+      "conditions": [
+        {
+          "column": "isOver",
+          "operator": "=",
+          "value": "0"
+        },
+        {
+          "column": "isOver",
+          "operator": "is null"
+        }
+      ]
     }
   ],
   "page": 1,
-  "pageSize": 10,
+  "pageSize": 1,
   "orderBy": {
     "columns": [
       {
-        "alias": "serverTime",
-        "direction": "DESC"
+        "column": "taskId",
+        "direction": "desc"
       }
     ]
   }
