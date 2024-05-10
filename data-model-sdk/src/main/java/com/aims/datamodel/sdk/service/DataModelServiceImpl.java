@@ -81,6 +81,28 @@ public class DataModelServiceImpl {
         return jdbcTemplate.queryForList(sql);
     }
 
+    public PageResult queryPageBySql(String sql, int page, long pageSize) {
+        log.info("接收到查询sql：{}", sql);
+        sql = sql.replaceAll("\\s+", " ");//替换空格转义字符为空格，如\t,\n,\r等
+        log.info("处理转义后sql：{}", sql);
+        if (page != 0) {
+            long offset = (page - 1) * pageSize;
+            sql += String.format(" LIMIT %s OFFSET %s", pageSize, offset);
+        }
+        int fromIdx = sql.indexOf("FROM");
+        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ");
+        countSql.append(sql.substring(fromIdx));
+        int limitIdx = countSql.indexOf("LIMIT");
+        if (limitIdx != -1) {
+            countSql.delete(limitIdx, countSql.length());
+        }
+        log.debug("query-page-sql {}", sql);
+        log.debug("query-page-countSql {}", countSql);
+        var records = jdbcTemplate.queryForList(sql);
+        var totalCount = jdbcTemplate.queryForObject(countSql.toString(), Long.class);
+        return new PageResult(records, totalCount, page, pageSize);
+    }
+
     public PageResult queryPageByInput(String dataModelId, QueryInput queryInput) {
         var dm = getDataModel(dataModelId);
         DataModel dv = dm.toJavaObject(DataModel.class);
