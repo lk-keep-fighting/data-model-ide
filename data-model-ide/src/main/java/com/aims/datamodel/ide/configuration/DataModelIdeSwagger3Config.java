@@ -30,8 +30,8 @@ import java.util.ArrayList;
  * @description :
  */
 
-@Configuration
-@EnableOpenApi
+//@Configuration
+//@EnableOpenApi
 public class DataModelIdeSwagger3Config {
 
     /**
