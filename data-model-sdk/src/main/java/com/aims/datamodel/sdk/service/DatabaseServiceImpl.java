@@ -76,7 +76,7 @@ public class DatabaseServiceImpl {
         }).toList());
         dataModel.setAliasMap(aliasMap);
         if (fileName == null) fileName = tableName;
-        dataModelService.saveDataModel(fileName, JSONObject.from(dataModel));
+        dataModelService.saveDataModel(fileName, dataModel);
     }
 
     public void saveTableToFile(String dbName, String tableName) throws Exception {

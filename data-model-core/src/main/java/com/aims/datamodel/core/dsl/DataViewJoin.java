@@ -11,9 +11,9 @@ public class DataViewJoin {
     private List<DataViewJoinCondition> on;
 
     public String buildJoinSql(DataViewAliasMap aliasMap) {
-        String tableSql = aliasMap.getTableSql(table);
-        String col1Sql =aliasMap.getColumnSql(on.get(0).getColumn1());
-        String col2Sql =aliasMap.getColumnSql(on.get(0).getColumn2());
+        String tableSql = aliasMap.buildTableSql(table);
+        String col1Sql =aliasMap.buildColumnSql(on.get(0).getColumn1());
+        String col2Sql =aliasMap.buildColumnSql(on.get(0).getColumn2());
         return " " + type + " JOIN " + tableSql + " " + table + " ON " + col1Sql + " = " + col2Sql;
     }
 

@@ -11,6 +11,6 @@ public class OrderBy {
     private List<OrderByColumn> columns;
 
     public String buildOrderBySql(DataViewAliasMap aliasMap) {
-        return "ORDER BY " + columns.stream().map(column -> aliasMap.getColumnSql(column.getColumn()) + " " + (column.getDirection() != null && column.getDirection().equalsIgnoreCase("asc") ? "ASC" : "DESC")).collect(Collectors.joining(", "));
+        return "ORDER BY " + columns.stream().map(column -> aliasMap.buildColumnSql(column.getColumn()) + " " + (column.getDirection() != null && column.getDirection().equalsIgnoreCase("asc") ? "ASC" : "DESC")).collect(Collectors.joining(", "));
     }
 }

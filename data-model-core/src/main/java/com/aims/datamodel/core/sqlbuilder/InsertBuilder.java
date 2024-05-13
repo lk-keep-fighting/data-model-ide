@@ -43,7 +43,7 @@ public class InsertBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append("insert into ").append(dataModel.getMainTable()).append("(");
         if (inputJson == null) return "";
-        var insertColumns = inputJson.keySet().stream().map(key -> dataModel.getAliasMap().getColumnSql(key)).collect(Collectors.joining(","));
+        var insertColumns = inputJson.keySet().stream().map(key -> dataModel.getAliasMap().buildColumnSql(key)).collect(Collectors.joining(","));
         sb.append(insertColumns).append(") values(");
         inputJson.forEach((key, value) -> {
             sb.append("'").append(value == null ? null : value.toString().replace("'", "''")).append("',");

@@ -6,18 +6,16 @@ import com.aims.datamodel.core.sqlbuilder.input.UpdateInput;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class UpdateBuilder {
     public static String buildByInput(UpdateInput input) {
         DataModel dm = input.getDataModel();
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE ");
-        String tableAlias = input.getDataModel().getMainTable();
         sb.append(input.getDataModel().getMainTable());
         sb.append(" SET ");
         input.getValue().forEach((key, value) -> {
-            sb.append(dm.getAliasMap().getColumnSql(key));
+            sb.append(dm.getAliasMap().buildColumnSql(key));
             sb.append(" = '");
             sb.append(value == null ? null : value.toString().replace("'", "''"));
             sb.append("',");
@@ -25,7 +23,7 @@ public class UpdateBuilder {
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" WHERE ");
         if (Strings.isNotBlank(input.getId())) {
-            String primaryKey = input.getDataModel().getAliasMap().getTablePrimaryKey(tableAlias);
+            String primaryKey = input.getDataModel().findPrimaryKey();
             sb.append(primaryKey);
             sb.append(" = '").append(input.getId()).append("'");
         }

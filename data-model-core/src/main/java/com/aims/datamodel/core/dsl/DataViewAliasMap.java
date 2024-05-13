@@ -1,48 +1,53 @@
 package com.aims.datamodel.core.dsl;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-@Data
 public class DataViewAliasMap {
+    @Setter
+    @Getter
     private List<DataViewTableAliasMap> tableMaps;
+    @Setter
+    @Getter
     private List<DataViewColumnAliasMap> columnMaps;
 
-    public Optional<DataViewTableAliasMap> getTableMap(String alias) {
-        return tableMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
-    }
+//    public Optional<DataViewTableAliasMap> getTableMap(String alias) {
+//        return tableMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
+//    }
+//
+//    public Optional<DataViewColumnAliasMap> getColumnMap(String alias) {
+//        return columnMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
+//    }
 
-    public Optional<DataViewColumnAliasMap> getColumnMap(String alias) {
-        return columnMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
-    }
-
-    public String getTablePrimaryKey(String alias) {
+    public String findTablePrimaryKey(String alias) {
         if (tableMaps == null) return "id";
-        Optional<DataViewTableAliasMap> tableMap = tableMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
+        Optional<DataViewTableAliasMap> tableMap = tableMaps.stream().filter(m -> alias.equals(m.getAlias())).findFirst();
         if (tableMap.isPresent()) {
-            return tableMap.get().getPrimaryKey();
+            return tableMap.get().findPrimaryKey();
         } else {
-            return alias + "id";
+            return "id";
         }
     }
 
-    public String getTableSql(String alias) {
+    public String buildTableSql(String alias) {
         if (tableMaps == null) return alias;
-        Optional<DataViewTableAliasMap> tableMap = tableMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
+        Optional<DataViewTableAliasMap> tableMap = tableMaps.stream().filter(m -> alias.equals(m.getAlias())).findFirst();
         if (tableMap.isPresent()) {
-            return tableMap.get().getFullSqlName();
+            return tableMap.get().buildFullSqlName();
         } else {
             return alias;
         }
     }
 
-    public String getColumnSql(String alias) {
-        if (columnMaps == null)  return "`" + alias + "`";
+    public String buildColumnSql(String alias) {
+        if (columnMaps == null) return "`" + alias + "`";
         Optional<DataViewColumnAliasMap> columnMap = columnMaps.stream().filter(m -> m.getAlias().equals(alias)).findFirst();
         if (columnMap.isPresent()) {
-            return columnMap.get().getFullSqlName();
+            return columnMap.get().buildFullSqlName();
         } else {
             return "`" + alias + "`";
         }

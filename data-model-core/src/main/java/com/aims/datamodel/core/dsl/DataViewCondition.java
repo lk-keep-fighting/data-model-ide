@@ -37,7 +37,7 @@ public class DataViewCondition {
     }
 
     public String buildConditionSql(DataViewAliasMap aliasMap) {
-        String sql = aliasMap.getColumnSql(column) + " ";
+        String sql = aliasMap.buildColumnSql(column) + " ";
 
         operator = operator.toUpperCase();
         if ("NOT LIKE".equals(operator)) {

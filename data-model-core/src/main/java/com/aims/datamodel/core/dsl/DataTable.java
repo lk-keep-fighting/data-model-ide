@@ -12,13 +12,13 @@ public class DataTable {
     private String primaryKey;
     List<DataTableColumn> columns;
 
-    public String getFullSqlName() {
+    public String buildFullSqlName() {
         if (StringUtils.hasText(this.getDbName()))
             return this.getDbName() + "." + this.getTable();
         else return this.getTable();
     }
 
-    public String getPrimaryKey() {
+    public String findPrimaryKey() {
         if (StringUtils.isEmpty(this.primaryKey))
             return "id";
         return this.primaryKey;

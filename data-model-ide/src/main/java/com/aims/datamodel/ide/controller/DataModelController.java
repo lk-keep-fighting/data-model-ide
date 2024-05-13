@@ -1,13 +1,12 @@
 package com.aims.datamodel.ide.controller;
 
+import com.aims.datamodel.core.dsl.DataModel;
 import com.aims.datamodel.ide.controller.dto.ApiResult;
 import com.aims.datamodel.sdk.service.DataModelServiceImpl;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 
@@ -18,9 +17,15 @@ public class DataModelController {
     @Autowired
     DataModelServiceImpl dataModelService;
 
-    @RequestMapping("/get")
+    @GetMapping("/get")
     public ApiResult getDataModel(@PathVariable("dataModelId") String dataModelId) {
         var data = dataModelService.getDataModel(dataModelId);
         return ApiResult.ok(data);
+    }
+
+    @PostMapping("/createOrSave")
+    public ApiResult saveDataModel(@PathVariable("dataModelId") String dataModelId, @RequestBody DataModel dataModel) throws Exception {
+        dataModelService.saveDataModel(dataModelId, dataModel);
+        return ApiResult.ok(0);
     }
 }

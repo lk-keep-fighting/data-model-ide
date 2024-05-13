@@ -47,7 +47,7 @@ public class QueryInput {
             sql.append(" AND (").append(buildMainConditionsSql(from.getConditions())).append(") ");
         }
         if (ids != null && !ids.isEmpty()) {
-            sql.append(" AND m.id IN (").append(ids.stream().map(id -> "'" + id + "'").collect(Collectors.joining(","))).append(") ");
+            sql.append(" AND " + from.buildPrimaryKeySql() + " IN (").append(ids.stream().map(id -> "'" + id + "'").collect(Collectors.joining(","))).append(") ");
         }
         if (conditions != null && !conditions.isEmpty()) {
             sql.append(" AND (").append(buildMainConditionsSql(conditions)).append(") ");
@@ -108,7 +108,7 @@ public class QueryInput {
                 });
             }
         }
-        var sql = selects.stream().map(column -> aliasMap.getColumnSql(column.getColumn()) + " AS `" + column.getColumn() + "`").collect(Collectors.joining(", "));
+        var sql = selects.stream().map(column -> aliasMap.buildColumnSql(column.getColumn()) + " AS `" + column.getColumn() + "`").collect(Collectors.joining(", "));
         if (StringUtils.hasText(sql)) {
             return sql;
         } else return " * ";
