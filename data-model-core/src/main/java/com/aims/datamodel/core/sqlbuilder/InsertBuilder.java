@@ -1,6 +1,7 @@
 package com.aims.datamodel.core.sqlbuilder;
 
 import com.aims.datamodel.core.dsl.DataModel;
+import com.aims.datamodel.core.dsl.DataModelColumn;
 import com.aims.datamodel.core.sqlbuilder.input.InsertInput;
 import com.alibaba.fastjson2.JSONObject;
 
@@ -62,9 +63,16 @@ public class InsertBuilder {
         sb.append("insert into ").append(dataModel.getMainTable()).append("(");
         if (input.getValues() == null) return "";
         var values = input.getValues();
-        var columnNames = JSONObject.from(values.get(0)).keySet().stream()
-                .map(dataModel::findStoreColumnName)
-                .collect(Collectors.toList());
+        List<String> columnNames;
+        if (dataModel.getColumns() != null && dataModel.getColumns().size() > 0) {
+            columnNames = dataModel.getColumns().stream()
+                    .map(DataModelColumn::findStoreColumnName)
+                    .collect(Collectors.toList());
+        } else {
+            columnNames = JSONObject.from(values.get(0)).keySet().stream()
+                    .map(dataModel::findStoreColumnName)
+                    .collect(Collectors.toList());
+        }
         sb.append("`").append(String.join("`,`", columnNames)).append("`) VALUES ");
         StringJoiner valuesJoiner = new StringJoiner(", ");
         for (var value : values) {
@@ -72,8 +80,11 @@ public class InsertBuilder {
             List<String> valueStrs = columnNames.stream()
                     .map(column -> {
                         String v = jsonValue.getString(column);
-                        // 确保字符串值被引号包围，并且转义单引号
-                        return "'" + v.replace("'", "\\'") + "'";
+                        if (v == null)
+                            return "NULL";
+                        else
+                            // 确保字符串值被引号包围，并且转义单引号
+                            return "'" + v.replace("'", "\\'") + "'";
                     })
                     .collect(Collectors.toList());
             valuesJoiner.add("(" + String.join(", ", valueStrs) + ")");

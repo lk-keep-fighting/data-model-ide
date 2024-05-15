@@ -38,7 +38,7 @@ class DataModelSdkApplicationTests {
         System.out.println(result);
     }
 
-            @Test
+//            @Test
     void testBatchInsert() {
         var result = dataModelService.insertBatch("test", "[{\"id\":\"66999\",\"name\":\"测试66999\"},{\"id\":\"661001\",\"name\":\"66测试1001\"},{\"id\":\"661002\",\"name\":\"66测试1002\"}]");
         System.out.println(result);

@@ -5,6 +5,12 @@ import lombok.Data;
 @Data
 public class DataModelColumn extends DataTableColumn {
     private String column;
+
+    public String findStoreColumnName() {
+        if (this.getStoreColumn() != null)
+            return this.getStoreColumn();
+        return this.getColumn();
+    }
 //    /**
 //     * 数据精度，包含小数位的数据总长度，与store共享
 //     */
