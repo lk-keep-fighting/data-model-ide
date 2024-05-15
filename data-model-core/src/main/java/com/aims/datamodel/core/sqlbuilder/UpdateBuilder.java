@@ -15,7 +15,7 @@ public class UpdateBuilder {
         sb.append(input.getDataModel().getMainTable());
         sb.append(" SET ");
         input.getValue().forEach((key, value) -> {
-            sb.append(dm.getAliasMap().buildColumnSql(key));
+            sb.append(dm.buildColumnSqlWithTable(key));
             sb.append(" = '");
             sb.append(value == null ? null : value.toString().replace("'", "''"));
             sb.append("',");
@@ -40,7 +40,7 @@ public class UpdateBuilder {
         DataModel dm = input.getDataModel();
         StringBuilder sql = new StringBuilder();
         for (var condition : conditions) {
-            sql.append(condition.buildConditionSql(dm.getAliasMap()) + " AND ");
+            sql.append(condition.buildConditionSql(dm) + " AND ");
         }
         return sql.substring(0, sql.length() - 5);
     }

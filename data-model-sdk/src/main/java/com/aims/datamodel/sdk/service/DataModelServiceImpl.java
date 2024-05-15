@@ -33,7 +33,12 @@ public class DataModelServiceImpl {
         JSONObject defDataModel = new JSONObject();
         defDataModel.put("mainTable", dataModelId);
         var dataModel = FileUtil.readOrCreateFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", defDataModel.toJSONString());
-        return dataModel.toJavaObject(DataModel.class);
+        return dataModel.to(DataModel.class);
+    }
+    public JSONObject getDataModelJson(String dataModelId) {
+        JSONObject defDataModel = new JSONObject();
+        defDataModel.put("mainTable", dataModelId);
+        return FileUtil.readOrCreateFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", defDataModel.toJSONString());
     }
 
     public void saveDataModel(String dataModelId, DataModel dataModel) throws Exception {
@@ -127,11 +132,26 @@ public class DataModelServiceImpl {
         InsertInput input = new InsertInput();
         input.setDataModel(dm);
         input.setValues(JSONArray.parse(values));
-        var sql = InsertBuilder.buildBatchByInput(input);
+        var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
         log.debug("batch-insert-sql: {}", sql);
-        var res = jdbcTemplate.batchUpdate(sql.toArray(new String[0]));
+        var res = jdbcTemplate.batchUpdate(sql);
         return res.length;
     }
+
+//    public long insertBatchByParam(String dataModelId, String values) {
+//        var dm = getDataModel(dataModelId);
+//        InsertInput input = new InsertInput();
+//        input.setDataModel(dm);
+//        input.setValues(JSONArray.parse(values));
+//        var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
+//        log.debug("batch-insert-sql: {}", sql);
+//        List<Object> params = new ArrayList<>();
+//        for (var item : JSONArray.parseArray(values)) {
+//            params.add(item);
+//        }
+//        var res = jdbcTemplate.batchUpdate(sql, params);
+//        return res.length;
+//    }
 
     public long updateById(String dataModelId, String id, String value) {
         if (id == null) {

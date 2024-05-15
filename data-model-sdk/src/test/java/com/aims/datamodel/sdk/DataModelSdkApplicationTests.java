@@ -4,6 +4,8 @@ import com.aims.datamodel.core.dsl.DataViewCondition;
 import com.aims.datamodel.sdk.service.DataModelServiceImpl;
 import com.aims.datamodel.sdk.service.DatabaseServiceImpl;
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,10 +38,17 @@ class DataModelSdkApplicationTests {
         System.out.println(result);
     }
 
-    //    @Test
+            @Test
     void testBatchInsert() {
         var result = dataModelService.insertBatch("test", "[{\"id\":\"66999\",\"name\":\"测试66999\"},{\"id\":\"661001\",\"name\":\"66测试1001\"},{\"id\":\"661002\",\"name\":\"66测试1002\"}]");
         System.out.println(result);
+    }
+
+    @Test
+    void getAModel() {
+        var res = dataModelService.getDataModel("logic");
+        var json= JSONObject.from(res);
+        System.out.println(json);
     }
 
     @Test

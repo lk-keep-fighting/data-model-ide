@@ -5,9 +5,10 @@ import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class DatabaseServiceImpl {
@@ -38,10 +39,10 @@ public class DatabaseServiceImpl {
         if (!columns.isEmpty())
             return columns.stream().map(column -> {
                 var dtColumn = new DataTableColumn();
-                dtColumn.setColumn(column.get("COLUMN_NAME").toString());
-                dtColumn.setDataType(column.get("DATA_TYPE").toString());
-                dtColumn.setStoreDataType(column.get("COLUMN_TYPE").toString());
-                dtColumn.setStoreLength(String.valueOf(column.get("CHARACTER_MAXIMUM_LENGTH")));
+                dtColumn.setStoreColumn(column.get("COLUMN_NAME").toString());
+                dtColumn.setStoreColumnType(column.get("COLUMN_TYPE").toString());
+                dtColumn.setStoreDataType(column.get("DATA_TYPE").toString());
+                dtColumn.setStoreDataLength(String.valueOf(column.get("CHARACTER_MAXIMUM_LENGTH")));
                 var storePrecision = column.get("NUMERIC_PRECISION");
                 if (storePrecision != null)
                     dtColumn.setStorePrecision(Integer.parseInt(storePrecision.toString()));
@@ -50,7 +51,7 @@ public class DatabaseServiceImpl {
                     dtColumn.setStoreScale(Integer.parseInt(storeScale.toString()));
                 dtColumn.setStoreComment(String.valueOf(column.get("COLUMN_COMMENT")));
                 dtColumn.setStoreIsNullable("YES".equals(String.valueOf(column.get("IS_NULLABLE"))));
-                dtColumn.setDefaultValue(String.valueOf(column.get("COLUMN_DEFAULT")));
+                dtColumn.setStoreDefaultValue(String.valueOf(column.get("COLUMN_DEFAULT")));
                 dtColumn.setStoreIsPrimaryKey("PRI".equals(String.valueOf(column.get("COLUMN_KEY"))));
                 return dtColumn;
             }).toList();
@@ -61,20 +62,25 @@ public class DatabaseServiceImpl {
         DataModel dataModel = new DataModel();
         dataModel.setMainTable(tableName);
         var columns = getColumnList(dbName, tableName);
-        var aliasMap = new DataViewAliasMap();
-        var tableMap = new DataViewTableAliasMap();
-        tableMap.setTable(tableName);
+        var tableMapValue = new TableAliasMap();
+//        tableMapValue.setTable(tableName);
+        tableMapValue.setStoreTable(tableName);
 //        tableMap.setColumns(columns);
-        tableMap.setPrimaryKey(columns.stream().filter(DataTableColumn::isStoreIsPrimaryKey).findFirst().map(DataTableColumn::getColumn).orElse(""));
-        tableMap.setDbName(dbName);
-        aliasMap.setTableMaps(List.of(tableMap));
-        aliasMap.setColumnMaps(columns.stream().map(column -> {
-            DataViewColumnAliasMap columnMap = JSONObject.parseObject(JSONObject.toJSONString(column), DataViewColumnAliasMap.class);
-            columnMap.setAlias(column.getColumn());
-            columnMap.setTable(tableName);
-            return columnMap;
-        }).toList());
-        dataModel.setAliasMap(aliasMap);
+        tableMapValue.setPrimaryKey(columns.stream().filter(DataTableColumn::isStoreIsPrimaryKey).findFirst().map(DataTableColumn::getStoreColumn).orElse(""));
+        tableMapValue.setStoreDatabase(dbName);
+        LinkedHashMap<String, TableAliasMap> tableMap =new LinkedHashMap<>();
+        tableMap.put(tableName, tableMapValue);
+        dataModel.setTableMap(tableMap);
+        LinkedHashMap<String, ColumnAliasMap> columnMap =new LinkedHashMap<>();
+        columns.forEach(column -> {
+            ColumnAliasMap clmMapValue = JSONObject.parseObject(JSONObject.toJSONString(column), ColumnAliasMap.class);
+            clmMapValue.setTable(tableName);
+//            clmMapValue.setColumn(column.getStoreColumn());
+            clmMapValue.setDataType(column.getStoreDataType());
+            clmMapValue.setDataLength(column.getStoreDataLength());
+            columnMap.put(clmMapValue.getStoreColumn(), clmMapValue);
+        });
+        dataModel.setColumnMap(columnMap);
         if (fileName == null) fileName = tableName;
         dataModelService.saveDataModel(fileName, dataModel);
     }

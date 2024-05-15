@@ -28,45 +28,27 @@
         ]
       }
     ],
-    "aliasMap": {
-      "columnMaps": [
-        {
-          "alias": "id",
-          "table": "m"
-        },
-        {
-          "alias": "logic_id",
-          "table": "logic",
-          "column": "id"
-        },
-        {
-          "alias": "logicId",
-          "table": "m"
-        },
-        {
-          "alias": "logicName",
-          "table": "logic",
-          "column": "name"
-        },
-        {
-          "alias": "bizId",
-          "table": "m"
-        },
-        {
-          "alias": "serverTime",
-          "table": "m"
-        }
-      ],
-      "tableMaps": [
-        {
-          "alias": "d",
-          "table": "logic_instance"
-        },
-        {
-          "alias": "logic",
-          "table": "logic"
-        }
-      ]
+    "columnMap": {
+      "id": {
+        "table": "logic_instance"
+      },
+      "logic_id": {
+        "table": "logic",
+        "storeColumn": "id"
+      },
+      "logicId": {
+        "table": "logic_instance"
+      },
+      "logicName": {
+        "table": "logic",
+        "storeColumn": "name"
+      },
+      "bizId": {
+        "table": "logic_instance"
+      },
+      "serverTime": {
+        "table": "logic_instance"
+      }
     }
   },
   "conditions": [

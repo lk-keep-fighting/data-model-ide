@@ -24,6 +24,7 @@ public class DataViewCondition {
 
     /**
      * 构造条件,默认操作符为=
+     *
      * @param alias
      * @param value
      */
@@ -36,8 +37,8 @@ public class DataViewCondition {
 
     }
 
-    public String buildConditionSql(DataViewAliasMap aliasMap) {
-        String sql = aliasMap.buildColumnSql(column) + " ";
+    public String buildConditionSql(DataModel dm) {
+        String sql = dm.buildColumnSqlWithTable(column) + " ";
 
         operator = operator.toUpperCase();
         if ("NOT LIKE".equals(operator)) {
@@ -55,7 +56,7 @@ public class DataViewCondition {
         } else if ("OR".equals(operator)) {
             if (conditions != null && !conditions.isEmpty()) {
                 sql = " (";
-                sql += conditions.stream().map(condition -> condition.buildConditionSql(aliasMap)).collect(Collectors.joining(" OR "));
+                sql += conditions.stream().map(condition -> condition.buildConditionSql(dm)).collect(Collectors.joining(" OR "));
                 sql += ")";
             }
         } else {

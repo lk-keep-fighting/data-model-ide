@@ -32,14 +32,12 @@ public class QueryInput {
         if (distinct) {
             sql.append(" DISTINCT ");
         }
-        DataViewAliasMap aliasMap = from.getAliasMap();
-
-        sql.append(buildColumnsSql(aliasMap)).append(" ");
-        sql.append(" FROM ").append(from.getMainTable()).append(" as m");
+        sql.append(buildColumnsSql(from)).append(" ");
+        sql.append(" FROM ").append(from.buildTableSql(from.getMainTable())).append(" as m");
 
         if (from.getJoins() != null) {
             for (DataViewJoin join : from.getJoins()) {
-                sql.append(join.buildJoinSql(aliasMap)).append(" ");
+                sql.append(join.buildJoinSql(from)).append(" ");
             }
         }
         sql.append(" WHERE 1=1 ");
@@ -59,11 +57,11 @@ public class QueryInput {
         }
 
         if (having != null && !having.getConditions().isEmpty()) {
-            sql.append(" HAVING ").append(having.generateHavingSql(from.getAliasMap())).append(" ");
+            sql.append(" HAVING ").append(having.generateHavingSql(from)).append(" ");
         }
 
         if (orderBy != null && !orderBy.getColumns().isEmpty()) {
-            sql.append(orderBy.buildOrderBySql(aliasMap)).append(" ");
+            sql.append(orderBy.buildOrderBySql(from)).append(" ");
         }
 
         // 添加分页逻辑
@@ -90,12 +88,12 @@ public class QueryInput {
     public String buildMainConditionsSql(List<DataViewCondition> conditions) {
         StringBuilder sql = new StringBuilder();
         for (var condition : conditions) {
-            sql.append(condition.buildConditionSql(from.getAliasMap()) + " AND ");
+            sql.append(condition.buildConditionSql(from) + " AND ");
         }
         return sql.substring(0, sql.length() - 5);
     }
 
-    public String buildColumnsSql(DataViewAliasMap aliasMap) {
+    public String buildColumnsSql(DataModel dm) {
         var dmClms = from.getColumns();
         if (selects == null || selects.isEmpty()) {
             if (dmClms == null)
@@ -108,7 +106,7 @@ public class QueryInput {
                 });
             }
         }
-        var sql = selects.stream().map(column -> aliasMap.buildColumnSql(column.getColumn()) + " AS `" + column.getColumn() + "`").collect(Collectors.joining(", "));
+        var sql = selects.stream().map(column -> dm.buildColumnSqlWithTable(column.getColumn()) + " AS `" + column.getColumn() + "`").collect(Collectors.joining(", "));
         if (StringUtils.hasText(sql)) {
             return sql;
         } else return " * ";

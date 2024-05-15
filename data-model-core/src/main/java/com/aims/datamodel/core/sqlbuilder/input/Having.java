@@ -1,5 +1,6 @@
 package com.aims.datamodel.core.sqlbuilder.input;
 
+import com.aims.datamodel.core.dsl.DataModel;
 import com.aims.datamodel.core.dsl.DataViewAliasMap;
 import com.aims.datamodel.core.dsl.DataViewCondition;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.List;
 public class Having {
     private List<DataViewCondition> conditions;
     private String logic;
-    public String generateHavingSql(DataViewAliasMap aliasMap) {
+    public String generateHavingSql(DataModel dm) {
         if (conditions == null || conditions.isEmpty()) {
             return ""; // 如果没有聚合条件，则返回空字符串
         }
@@ -19,7 +20,7 @@ public class Having {
         String conditionLogic = logic != null && !logic.isEmpty() ? logic.toUpperCase() : "AND";
         for (int i = 0; i < conditions.size(); i++) {
             DataViewCondition condition = conditions.get(i);
-            havingSql.append(condition.buildConditionSql(aliasMap));
+            havingSql.append(condition.buildConditionSql(dm));
             if (i < conditions.size() - 1) {
                 havingSql.append(" ").append(conditionLogic).append(" ");
             }

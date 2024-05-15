@@ -7,20 +7,8 @@ import java.util.List;
 
 @Data
 public class DataTable {
-    private String table;
-    private String dbName;
-    private String primaryKey;
+    private String storeTable;
+    private String storeDatabase;
     List<DataTableColumn> columns;
 
-    public String buildFullSqlName() {
-        if (StringUtils.hasText(this.getDbName()))
-            return this.getDbName() + "." + this.getTable();
-        else return this.getTable();
-    }
-
-    public String findPrimaryKey() {
-        if (StringUtils.isEmpty(this.primaryKey))
-            return "id";
-        return this.primaryKey;
-    }
 }

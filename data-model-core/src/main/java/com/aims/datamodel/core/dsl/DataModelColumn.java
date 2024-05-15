@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class DataModelColumn extends DataTableColumn {
-//    private String column;
+    private String column;
 //    /**
 //     * 数据精度，包含小数位的数据总长度，与store共享
 //     */

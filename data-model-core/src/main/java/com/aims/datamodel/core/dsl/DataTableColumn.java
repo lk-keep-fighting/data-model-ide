@@ -4,24 +4,19 @@ import lombok.Data;
 
 @Data
 public class DataTableColumn {
-    private String column;
     /**
-     * 数据展现类型，从业务使用角度来定义，如：text,number,datetime,boolean等
+     * 存储字段
      */
-    private String dataType;
-    /**
-     * 数据长度，如：50
-     */
-    private String dataLength;
+    private String storeColumn;
     /**
      * 默认值，与store共享
      */
-    private String defaultValue;
+    private String storeDefaultValue;
 
     /**
      * 完整的字段数据库存储类型，用于生成建表语句，如varchar(50)
      */
-    private String storeType;
+    private String storeColumnType;
     /**
      * 存储字段类型，不包含长度，如varchar
      */
@@ -29,7 +24,7 @@ public class DataTableColumn {
     /**
      * 存储字段长度，如50，与dataLength关联映射
      */
-    private String storeLength;
+    private String storeDataLength;
     private String storeComment;
     private int storePrecision;
     private int storeScale;

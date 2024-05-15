@@ -10,12 +10,10 @@ public class DataViewJoin {
     private String table;
     private List<DataViewJoinCondition> on;
 
-    public String buildJoinSql(DataViewAliasMap aliasMap) {
-        String tableSql = aliasMap.buildTableSql(table);
-        String col1Sql =aliasMap.buildColumnSql(on.get(0).getColumn1());
-        String col2Sql =aliasMap.buildColumnSql(on.get(0).getColumn2());
+    public String buildJoinSql(DataModel dm) {
+        String tableSql = dm.buildTableSql(table);
+        String col1Sql = dm.buildColumnSqlWithTable(on.get(0).getColumn1());
+        String col2Sql =dm.buildColumnSqlWithTable(on.get(0).getColumn2());
         return " " + type + " JOIN " + tableSql + " " + table + " ON " + col1Sql + " = " + col2Sql;
     }
-
-
 }

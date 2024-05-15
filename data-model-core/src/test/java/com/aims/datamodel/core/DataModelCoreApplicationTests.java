@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DataModelCoreApplicationTests {
 
     @Test
-    void contextLoads() {
+    void testRelaQueryJson() {
         String json = "{}";
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/query/simple.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/query/关联查询.json")));
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -32,20 +32,6 @@ class DataModelCoreApplicationTests {
         String expected = "SELECT m.`id` AS `id`, logic.`name` AS `logicName`  FROM logic_instance as m LEFT JOIN logic logic ON m.`logicId` = logic.`id`  WHERE 1=1  AND (m.`logicId`  IS NOT NULL)  AND (m.`bizId` = '1' AND logic.`name`  LIKE '%测试%') ORDER BY m.`serverTime` DESC  LIMIT 10 OFFSET 0";
         System.out.println("expected:" + expected);
         assertEquals(expected, sql);
-    }
-
-    @Test
-    void testSimple2Json() {
-        String json = "{}";
-        try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/query/simple2.json")));
-        } catch (IOException e) {
-            System.out.println("Failed to read JSON file: " + e.getMessage());
-            e.printStackTrace();
-        }
-        var sql = QueryBuilder.buildByJson(json);
-        System.out.println(sql);
-
     }
 
     @Test
@@ -63,7 +49,7 @@ class DataModelCoreApplicationTests {
         System.out.println(sql);
     }
 
-    //    @Test
+    @Test
     void testBatchInsert() {
         String json = "{}";
         try {
@@ -73,10 +59,11 @@ class DataModelCoreApplicationTests {
             e.printStackTrace();
         }
         InsertInput input = JSONObject.parseObject(json, InsertInput.class);
-        var sql = InsertBuilder.buildBatchByInput(input);
-        for (int i = 0; i < sql.stream().count(); i++) {
-            System.out.println(sql.get(i));
-        }
+        var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
+        System.out.println(sql);
+//        for (int i = 0; i < sql.stream().count(); i++) {
+//            System.out.println(sql.get(i));
+//        }
 //        assertEquals("SELECT m.id AS id, logic.name AS logicName FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.id WHERE 1=1 AND (m.logicId  IS NOT NULL) AND (m.bizId = '1' AND logic.name  LIKE '%测试%') ORDER BY m.serverTime DESC LIMIT 10 OFFSET 0", sql);
     }
 
