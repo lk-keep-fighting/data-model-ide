@@ -95,9 +95,9 @@ public class InsertBuilder {
 
     private static String buildOneInsertSql(DataModel dataModel, JSONObject inputJson) {
         StringBuilder sb = new StringBuilder();
-        sb.append("insert into ").append(dataModel.getMainTable()).append("(");
+        sb.append("insert into ").append(dataModel.buildTableSql(dataModel.getMainTable())).append("(");
         if (inputJson == null) return "";
-        var insertColumns = inputJson.keySet().stream().map(dataModel::findStoreColumnName).collect(Collectors.joining(","));
+        var insertColumns = inputJson.keySet().stream().map(dataModel::findStoreColumnSqlName).collect(Collectors.joining(","));
         sb.append(insertColumns).append(") values(");
         inputJson.forEach((key, value) -> {
             sb.append("'").append(value == null ? null : value.toString().replace("'", "''")).append("',");
@@ -107,17 +107,17 @@ public class InsertBuilder {
         return sb.toString();
     }
 
-    private static String buildOneParameterInsertSql(DataModel dataModel, JSONObject inputJson) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("insert into ").append(dataModel.getMainTable()).append("(`");
-        if (inputJson == null) return "";
-        var insertColumns = String.join("`,`", inputJson.keySet());
-        sb.append(insertColumns).append("`) values(");
-        inputJson.forEach((key, value) -> {
-            sb.append("?,");
-        });
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append(")");
-        return sb.toString();
-    }
+//    private static String buildOneParameterInsertSql(DataModel dataModel, JSONObject inputJson) {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("insert into ").append(dataModel.getMainTable()).append("(`");
+//        if (inputJson == null) return "";
+//        var insertColumns = String.join("`,`", inputJson.keySet());
+//        sb.append(insertColumns).append("`) values(");
+//        inputJson.forEach((key, value) -> {
+//            sb.append("?,");
+//        });
+//        sb.deleteCharAt(sb.length() - 1);
+//        sb.append(")");
+//        return sb.toString();
+//    }
 }

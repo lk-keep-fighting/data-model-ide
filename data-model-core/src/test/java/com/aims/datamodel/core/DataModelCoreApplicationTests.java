@@ -29,7 +29,7 @@ class DataModelCoreApplicationTests {
         }
         var sql = QueryBuilder.buildByJson(json);
         System.out.println("buildsql:" + sql);
-        String expected = "SELECT m.`id` AS `id`, logic.`name` AS `logicName`  FROM logic_instance as m LEFT JOIN logic logic ON m.`logicId` = logic.`id`  WHERE 1=1  AND (m.`logicId`  IS NOT NULL)  AND (m.`bizId` = '1' AND logic.`name`  LIKE '%测试%') ORDER BY m.`serverTime` DESC  LIMIT 10 OFFSET 0";
+        String expected = "SELECT m.`id` AS `id`, logic.`name` AS `logicName`  FROM `logic_instance` as m LEFT JOIN `logic` logic ON m.`logicId` = logic.`id`  WHERE 1=1  AND (m.`logicId`  IS NOT NULL)  AND (m.`bizId` = '1' AND logic.`name`  LIKE '%测试%') ORDER BY m.`serverTime` DESC  LIMIT 10 OFFSET 0";
         System.out.println("expected:" + expected);
         assertEquals(expected, sql);
     }

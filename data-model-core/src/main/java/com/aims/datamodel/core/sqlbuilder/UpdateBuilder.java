@@ -12,10 +12,10 @@ public class UpdateBuilder {
         DataModel dm = input.getDataModel();
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE ");
-        sb.append(input.getDataModel().getMainTable());
+        sb.append(input.getDataModel().buildTableSql(dm.getMainTable()));
         sb.append(" SET ");
         input.getValue().forEach((key, value) -> {
-            sb.append(dm.buildColumnSqlWithTable(key));
+            sb.append(dm.buildColumnSql(key));
             sb.append(" = '");
             sb.append(value == null ? null : value.toString().replace("'", "''"));
             sb.append("',");

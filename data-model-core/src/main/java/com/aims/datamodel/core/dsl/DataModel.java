@@ -32,15 +32,21 @@ public class DataModel {
     }
 
     public String buildColumnSqlWithTable(String column) {
+        String sql = buildColumnSql(column);
+        var mapValue = columnMap.get(column);
+        if (mapValue != null && StringUtils.hasText(mapValue.getTable())) {
+            sql = findTableAlias(mapValue.getTable()) + "." + sql;
+        }
+        return sql;
+    }
+
+    public String buildColumnSql(String column) {
         var columnName = column;
         String sql = String.format("`%s`", columnName);
         var mapValue = columnMap.get(column);
-        if (columnMap != null && mapValue != null) {
+        if (mapValue != null) {
             columnName = mapValue.getStoreColumn() == null ? column : mapValue.getStoreColumn();
             sql = String.format("`%s`", columnName);
-            if (StringUtils.hasText(mapValue.getTable())) {
-                sql = findTableAlias(mapValue.getTable()) + "." + sql;
-            }
         }
         return sql;
     }
@@ -54,6 +60,16 @@ public class DataModel {
         return columnName;
     }
 
+    /**
+     * 返回包含反引号的列名，如`type`
+     *
+     * @param column
+     * @return
+     */
+    public String findStoreColumnSqlName(String column) {
+        return String.format("`%s`", findStoreColumnName(column));
+    }
+
     public String buildTableSql(String alias) {
         if (tableMap == null) return alias;
         var tableName = alias;
@@ -61,9 +77,9 @@ public class DataModel {
         if (mapValue != null) {
             tableName = mapValue.getStoreTable() == null ? alias : mapValue.getStoreTable();
             if (StringUtils.hasText(mapValue.getStoreDatabase()))
-                return mapValue.getStoreDatabase() + "." + mapValue.getStoreTable();
+                return "`" + mapValue.getStoreDatabase() + "`.`" + mapValue.getStoreTable() + "`";
         }
-        return tableName;
+        return "`" + tableName + "`";
     }
 
     public String findTableAlias(String table) {
