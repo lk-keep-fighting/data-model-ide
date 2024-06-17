@@ -79,6 +79,8 @@ public class DataModel {
             if (StringUtils.hasText(mapValue.getStoreDatabase()))
                 return "`" + mapValue.getStoreDatabase() + "`.`" + mapValue.getStoreTable() + "`";
         }
+        if (tableName.startsWith("("))//子查询
+            return tableName;
         return "`" + tableName + "`";
     }
 
