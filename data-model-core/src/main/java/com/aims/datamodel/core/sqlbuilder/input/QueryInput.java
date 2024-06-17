@@ -53,11 +53,11 @@ public class QueryInput {
 
 
         if (groupBy != null && !groupBy.getColumns().isEmpty()) {
-            sql.append(" GROUP BY ").append(groupBy.buildGroupBySql()).append(" ");
+            sql.append(groupBy.buildGroupBySql()).append(" ");
         }
 
         if (having != null && !having.getConditions().isEmpty()) {
-            sql.append(" HAVING ").append(having.generateHavingSql(from)).append(" ");
+            sql.append(having.generateHavingSql(from)).append(" ");
         }
 
         if (orderBy != null && !orderBy.getColumns().isEmpty()) {
@@ -74,12 +74,16 @@ public class QueryInput {
     }
 
     public String convertPageSqlToCountSql(String pageSql) {
-        int fromIdx = pageSql.indexOf("FROM");
         StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ");
-        countSql.append(pageSql.substring(fromIdx));
-        int limitIdx = countSql.indexOf("LIMIT");
-        if (limitIdx != -1) {
-            countSql.delete(limitIdx, countSql.length());
+        int limitIdx = pageSql.indexOf("LIMIT");
+        if (limitIdx != -1) {//去除limit
+            pageSql = pageSql.substring(0, limitIdx - 1);
+        }
+        if (pageSql.toUpperCase().contains("GROUP BY")) {
+            countSql.append("FROM (").append(pageSql).append(") AS t");
+        } else {
+            int fromIdx = pageSql.indexOf("FROM");
+            countSql.append(pageSql.substring(fromIdx));
         }
         return countSql.toString();
     }

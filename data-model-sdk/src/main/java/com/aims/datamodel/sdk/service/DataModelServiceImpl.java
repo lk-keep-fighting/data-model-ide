@@ -35,6 +35,7 @@ public class DataModelServiceImpl {
         var dataModel = FileUtil.readOrCreateFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", defDataModel.toJSONString());
         return dataModel.to(DataModel.class);
     }
+
     public JSONObject getDataModelJson(String dataModelId) {
         JSONObject defDataModel = new JSONObject();
         defDataModel.put("mainTable", dataModelId);
@@ -87,16 +88,17 @@ public class DataModelServiceImpl {
         log.info("接收到查询sql：{}", sql);
         sql = sql.replaceAll("\\s+", " ");//替换空格转义字符为空格，如\t,\n,\r等
         log.info("处理转义后sql：{}", sql);
+
+        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ");
+        if (sql.toUpperCase().contains("GROUP BY")) {
+            countSql.append("FROM (").append(sql).append(") AS t");
+        } else {
+            int fromIdx = sql.indexOf("FROM");
+            countSql.append(sql.substring(fromIdx));
+        }
         if (page != 0) {
             long offset = (page - 1) * pageSize;
             sql += String.format(" LIMIT %s OFFSET %s", pageSize, offset);
-        }
-        int fromIdx = sql.indexOf("FROM");
-        StringBuilder countSql = new StringBuilder("SELECT COUNT(*) ");
-        countSql.append(sql.substring(fromIdx));
-        int limitIdx = countSql.indexOf("LIMIT");
-        if (limitIdx != -1) {
-            countSql.delete(limitIdx, countSql.length());
         }
         log.debug("query-page-sql {}", sql);
         log.debug("query-page-countSql {}", countSql);
