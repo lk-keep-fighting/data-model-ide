@@ -185,7 +185,7 @@ public class DataModelServiceImpl {
             throw new RuntimeException("id is null");
         }
         var dm = getDataModel(dataModelId);
-        var sql = "delete from " + dm.getMainTable() + " where " + dm.findPrimaryKey() + "='" + id + "'";
+        var sql = "delete from " + dm.buildTableSql(dm.getMainTable()) + " where " + dm.findPrimaryKey() + "='" + id + "'";
         log.debug("delete-sql: {}", sql);
         jdbcTemplate.execute(sql);
     }
