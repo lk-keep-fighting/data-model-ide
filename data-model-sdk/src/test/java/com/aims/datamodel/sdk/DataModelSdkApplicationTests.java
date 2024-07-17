@@ -5,7 +5,6 @@ import com.aims.datamodel.sdk.service.DataModelServiceImpl;
 import com.aims.datamodel.sdk.service.DatabaseServiceImpl;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Random;
 
 @SpringBootTest
 class DataModelSdkApplicationTests {
@@ -32,22 +32,23 @@ class DataModelSdkApplicationTests {
         System.out.println(result.stream().count());
     }
 
-    //    @Test
+    @Test
     void testInsert() {
-        var result = dataModelService.insert("test", "{\"id\":\"5\",\"name\":\"测试\"}");
-        System.out.println(result);
-    }
-
-//            @Test
-    void testBatchInsert() {
-        var result = dataModelService.insertBatch("test", "[{\"id\":\"66999\",\"name\":\"测试66999\"},{\"id\":\"661001\",\"name\":\"66测试1001\"},{\"id\":\"661002\",\"name\":\"66测试1002\"}]");
+        var result = dataModelService.insert("test", "{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"测试\"}");
         System.out.println(result);
     }
 
     @Test
-    void getAModel() {
-        var res = dataModelService.getDataModel("logic");
-        var json= JSONObject.from(res);
+    void testBatchInsert() {
+        String batch = String.valueOf(new Random().nextInt());
+        var result = dataModelService.insertBatch("test", "[{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"}]");
+        System.out.println(result);
+    }
+
+    @Test
+    void getAModel() throws Exception {
+        var res = dataModelService.getDataModel("test");
+        var json = JSONObject.from(res);
         System.out.println(json);
     }
 
@@ -64,14 +65,14 @@ class DataModelSdkApplicationTests {
 
     @Test
     void testQuery() {
-        var result = dataModelService.query("logic", null);
+        var result = dataModelService.query("test", null);
         System.out.println(result.stream().count());
     }
 
     @Test
-    void testSaveTableToFile() {
+    void testSaveTableToDataModel() {
         try {
-            databaseService.saveTableToFile("lapp", "logic");
+            databaseService.saveTableToDataModel("datamodel", "test");
         } catch (Exception e) {
             e.printStackTrace();
         }

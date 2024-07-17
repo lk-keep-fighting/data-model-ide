@@ -8,8 +8,6 @@ import com.aims.datamodel.core.sqlbuilder.input.InsertInput;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.core.sqlbuilder.input.UpdateInput;
 import com.aims.datamodel.sdk.dto.PageResult;
-import com.aims.datamodel.sdk.utils.FileUtil;
-import com.aims.datamodel.sdk.AppConfig;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -25,25 +23,16 @@ import java.util.Map;
 @Slf4j
 public class DataModelServiceImpl {
     @Autowired
-    private AppConfig appConfig;
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private DataModelConfigServiceImpl dataModelConfigService;
 
     public DataModel getDataModel(String dataModelId) {
-        JSONObject defDataModel = new JSONObject();
-        defDataModel.put("mainTable", dataModelId);
-        var dataModel = FileUtil.readOrCreateFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", defDataModel.toJSONString());
-        return dataModel.to(DataModel.class);
-    }
-
-    public JSONObject getDataModelJson(String dataModelId) {
-        JSONObject defDataModel = new JSONObject();
-        defDataModel.put("mainTable", dataModelId);
-        return FileUtil.readOrCreateFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", defDataModel.toJSONString());
+        return dataModelConfigService.getConfigJson(dataModelId);
     }
 
     public void saveDataModel(String dataModelId, DataModel dataModel) throws Exception {
-        FileUtil.writeFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", JSONObject.toJSONString(dataModel));
+        dataModelConfigService.updateOrCreateConfigJson(dataModelId, dataModel);
     }
 
     public Map<String, Object> queryById(String dataModelId, String id) {
@@ -189,6 +178,12 @@ public class DataModelServiceImpl {
         log.debug("delete-sql: {}", sql);
         jdbcTemplate.execute(sql);
     }
+
+    /**
+     * 执行任意sql，无返回值
+     *
+     * @param sql
+     */
 
     public void executeSql(String sql) {
         log.debug("execute-sql: {}", sql);

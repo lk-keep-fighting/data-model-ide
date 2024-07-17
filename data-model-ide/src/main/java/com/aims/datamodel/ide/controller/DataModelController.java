@@ -22,6 +22,11 @@ public class DataModelController {
         var data = dataModelService.getDataModel(dataModelId);
         return ApiResult.ok(data);
     }
+//    @PostMapping("/query")
+//    public ApiResult query(@RequestBody String input) {
+//        var data = dataModelService.query(dataModelId);
+//        return ApiResult.ok(data);
+//    }
 
     @PostMapping("/createOrSave")
     public ApiResult saveDataModel(@PathVariable("dataModelId") String dataModelId, @RequestBody DataModel dataModel) throws Exception {
