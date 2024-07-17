@@ -13,6 +13,8 @@ public class UpdateBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE ");
         sb.append(input.getDataModel().buildTableSql(dm.getMainTable()));
+        sb.append(" AS ");
+        sb.append(input.getDataModel().findTableAlias(dm.getMainTable()));
         sb.append(" SET ");
         input.getValue().forEach((key, value) -> {
             sb.append(dm.buildColumnSql(key));

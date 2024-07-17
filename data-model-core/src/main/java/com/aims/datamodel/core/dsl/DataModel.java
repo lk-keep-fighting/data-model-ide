@@ -15,6 +15,7 @@ import java.util.Map;
 @Data
 public class DataModel {
     private String mainTable;
+    private String version;
     private List<DataModelColumn> columns;
     private List<DataViewCondition> conditions;
     private List<DataViewJoin> joins;
