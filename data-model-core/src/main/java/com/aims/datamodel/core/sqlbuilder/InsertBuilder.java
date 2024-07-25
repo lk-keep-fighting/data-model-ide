@@ -73,7 +73,9 @@ public class InsertBuilder {
                     .map(dataModel::findStoreColumnName)
                     .collect(Collectors.toList());
         }
-        sb.append("`").append(String.join("`,`", columnNames)).append("`) VALUES ");
+        columnNames.forEach(column -> sb.append(dataModel.findStoreColumnSqlName(column)).append(","));
+        sb.delete(sb.length() - 1, sb.length());
+        sb.append(") VALUES ");
         StringJoiner valuesJoiner = new StringJoiner(", ");
         for (var value : values) {
             var jsonValue = JSONObject.from(value);

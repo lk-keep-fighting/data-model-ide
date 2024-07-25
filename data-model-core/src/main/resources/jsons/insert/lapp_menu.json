@@ -1,0 +1,33 @@
+{
+  "values": {
+    "key": 2,
+    "label": "lable2",
+    "pageId": "p1",
+    "orderNo": 1
+  },
+  "dataModel": {
+    "mainTable": "lapp_menu",
+    "columns": [
+      {
+        "column": "key"
+      },
+      {
+        "column": "label"
+      },
+      {
+        "column": "pageId"
+      },
+      {
+        "column": "orderNo"
+      }
+    ],
+    "columnMap": {
+      "key": {
+        "storeColumn": "id"
+      },
+      "label": {
+        "storeColumn": "title"
+      }
+    }
+  }
+}

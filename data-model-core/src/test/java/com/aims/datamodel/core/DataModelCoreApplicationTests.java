@@ -61,10 +61,19 @@ class DataModelCoreApplicationTests {
         InsertInput input = JSONObject.parseObject(json, InsertInput.class);
         var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
         System.out.println(sql);
-//        for (int i = 0; i < sql.stream().count(); i++) {
-//            System.out.println(sql.get(i));
-//        }
-//        assertEquals("SELECT m.id AS id, logic.name AS logicName FROM logic_instance as m LEFT JOIN logic logic ON m.logicId = logic.id WHERE 1=1 AND (m.logicId  IS NOT NULL) AND (m.bizId = '1' AND logic.name  LIKE '%测试%') ORDER BY m.serverTime DESC LIMIT 10 OFFSET 0", sql);
+    }
+    @Test
+    void testBatchInsert2() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/insert/lapp_menu.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        InsertInput input = JSONObject.parseObject(json, InsertInput.class);
+        var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
+        System.out.println(sql);
     }
 
     @Test
