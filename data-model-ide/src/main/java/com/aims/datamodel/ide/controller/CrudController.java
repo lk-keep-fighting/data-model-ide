@@ -2,28 +2,22 @@ package com.aims.datamodel.ide.controller;
 
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.ide.controller.dto.ApiResult;
-import com.aims.datamodel.sdk.dto.PageResult;
-import com.aims.datamodel.sdk.service.DataModelServiceImpl;
-import com.alibaba.fastjson2.JSONObject;
+import com.aims.datamodel.sdk.service.DataStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/crud/{dataModelId}")
 @Slf4j
 public class CrudController {
     @Autowired
-    DataModelServiceImpl dataModelService;
+    DataStoreService dataStoreService;
 
     @PostMapping("/add")
     public ApiResult addData(@PathVariable("dataModelId") String dataModelId, @RequestBody String data) {
         try {
-            var res = dataModelService.insert(dataModelId, data);
+            var res = dataStoreService.insert(dataModelId, data);
             return new ApiResult().setData(res);
         } catch (Exception e) {
             log.error("addData error", e);
@@ -34,7 +28,7 @@ public class CrudController {
     @PostMapping("/batchAdd")
     public ApiResult batchAddData(@PathVariable("dataModelId") String dataModelId, @RequestBody String data) {
         try {
-            var res = dataModelService.insertBatch(dataModelId, data);
+            var res = dataStoreService.insertBatch(dataModelId, data);
             return new ApiResult().setData(res);
         } catch (Exception e) {
             log.error("batchAddData error", e);
@@ -45,7 +39,7 @@ public class CrudController {
     @PutMapping("/edit/{dataId}")
     public ApiResult editData(@PathVariable("dataModelId") String dataModelId, @PathVariable("dataId") String dataId, @RequestBody String data) {
         try {
-            var res = dataModelService.updateById(dataModelId, dataId, data);
+            var res = dataStoreService.updateById(dataModelId, dataId, data);
             return new ApiResult().setData(res);
         } catch (Exception e) {
             log.error("editData error", e);
@@ -57,7 +51,7 @@ public class CrudController {
     @GetMapping("/get/{dataId}")
     public ApiResult getData(@PathVariable("dataModelId") String dataModelId, @PathVariable("dataId") String dataId) {
         try {
-            var res = dataModelService.queryById(dataModelId, dataId);
+            var res = dataStoreService.queryById(dataModelId, dataId);
             return new ApiResult().setData(res);
         } catch (Exception e) {
             log.error("getData error", e);
@@ -68,7 +62,7 @@ public class CrudController {
     @PostMapping("/query")
     public ApiResult queryData(@PathVariable("dataModelId") String dataModelId, @RequestBody QueryInput queryInput) {
         try {
-            var res = dataModelService.queryByInput(dataModelId, queryInput);
+            var res = dataStoreService.queryByInput(dataModelId, queryInput);
             return new ApiResult().setData(res);
         } catch (Exception e) {
             log.error("queryData error", e);
@@ -79,7 +73,7 @@ public class CrudController {
     @PostMapping("/queryPage")
     public ApiResult queryPageData(@PathVariable("dataModelId") String dataModelId, @RequestBody QueryInput queryInput) {
         try {
-            var res = dataModelService.queryPageByInput(dataModelId, queryInput);
+            var res = dataStoreService.queryPageByInput(dataModelId, queryInput);
             return new ApiResult().setData(res);
         } catch (Exception e) {
             log.error("queryPageData error", e);
@@ -90,7 +84,7 @@ public class CrudController {
     @DeleteMapping("/delete/{dataId}")
     public ApiResult deleteData(@PathVariable("dataModelId") String dataModelId, @PathVariable("dataId") String dataId) {
         try {
-            dataModelService.deleteById(dataModelId, dataId);
+            dataStoreService.deleteById(dataModelId, dataId);
             return ApiResult.ok(dataId);
         } catch (Exception e) {
             log.error("deleteData error", e);

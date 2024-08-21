@@ -1,7 +1,7 @@
 package com.aims.datamodel.ide.controller;
 
 import com.aims.datamodel.ide.controller.dto.ApiResult;
-import com.aims.datamodel.sdk.service.DatabaseServiceImpl;
+import com.aims.datamodel.sdk.service.impl.DatabaseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

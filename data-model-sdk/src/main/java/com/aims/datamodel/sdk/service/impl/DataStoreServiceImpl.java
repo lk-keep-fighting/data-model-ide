@@ -1,4 +1,4 @@
-package com.aims.datamodel.sdk.service;
+package com.aims.datamodel.sdk.service.impl;
 
 import com.aims.datamodel.core.dsl.DataModel;
 import com.aims.datamodel.core.dsl.DataViewCondition;
@@ -8,6 +8,8 @@ import com.aims.datamodel.core.sqlbuilder.input.InsertInput;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.core.sqlbuilder.input.UpdateInput;
 import com.aims.datamodel.sdk.dto.PageResult;
+import com.aims.datamodel.sdk.service.DataModelConfigServiceImpl;
+import com.aims.datamodel.sdk.service.DataStoreService;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class DataModelServiceImpl {
+public class DataStoreServiceImpl implements DataStoreService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
@@ -31,9 +33,6 @@ public class DataModelServiceImpl {
         return dataModelConfigService.getConfigJson(dataModelId);
     }
 
-    public void saveDataModel(String dataModelId, DataModel dataModel) throws Exception {
-        dataModelConfigService.updateOrCreateConfigJson(dataModelId, dataModel);
-    }
 
     public Map<String, Object> queryById(String dataModelId, String id) {
         List<String> ids = new ArrayList<>();
@@ -129,21 +128,6 @@ public class DataModelServiceImpl {
         return res.length;
     }
 
-//    public long insertBatchByParam(String dataModelId, String values) {
-//        var dm = getDataModel(dataModelId);
-//        InsertInput input = new InsertInput();
-//        input.setDataModel(dm);
-//        input.setValues(JSONArray.parse(values));
-//        var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
-//        log.debug("batch-insert-sql: {}", sql);
-//        List<Object> params = new ArrayList<>();
-//        for (var item : JSONArray.parseArray(values)) {
-//            params.add(item);
-//        }
-//        var res = jdbcTemplate.batchUpdate(sql, params);
-//        return res.length;
-//    }
-
     public long updateById(String dataModelId, String id, String value) {
         if (id == null) {
             throw new RuntimeException("id is null");
@@ -184,7 +168,6 @@ public class DataModelServiceImpl {
      *
      * @param sql
      */
-
     public void executeSql(String sql) {
         log.debug("execute-sql: {}", sql);
         jdbcTemplate.execute(sql);

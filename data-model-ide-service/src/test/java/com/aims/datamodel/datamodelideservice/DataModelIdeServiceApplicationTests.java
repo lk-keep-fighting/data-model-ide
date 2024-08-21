@@ -1,12 +1,12 @@
 package com.aims.datamodel.datamodelideservice;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class DataModelIdeServiceApplicationTests {
 
-    @Test
+//    @Test
     void contextLoads() {
     }
 

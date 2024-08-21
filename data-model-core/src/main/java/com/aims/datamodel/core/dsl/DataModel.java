@@ -14,6 +14,11 @@ import java.util.Map;
 @Accessors(chain = true)
 @Data
 public class DataModel {
+    private String id;
+    private String name;
+    private String type;
+    private String group;
+    private String memo;
     private String mainTable;
     private String version;
     private List<DataModelColumn> columns;

@@ -1,3 +1,8 @@
 {
-    "mainTable": "test"
+  "mainTable": "test",
+  "columns": [
+    {
+      "column": "id"
+    }
+  ]
 }

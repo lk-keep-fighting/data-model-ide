@@ -1,7 +1,9 @@
 package com.aims.datamodel.sdk.service;
 
+import com.aims.datamodel.core.dsl.ColumnAliasMap;
 import com.aims.datamodel.core.dsl.DataModel;
-import com.aims.datamodel.sdk.AppConfig;
+import com.aims.datamodel.core.dsl.DataTableColumn;
+import com.aims.datamodel.core.dsl.TableAliasMap;
 import com.aims.datamodel.sdk.entity.DataModelEntity;
 import com.aims.datamodel.sdk.utils.VersionUtil;
 import com.alibaba.fastjson2.JSON;
@@ -11,17 +13,112 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
-public class DataModelConfigServiceImpl {
-    @Autowired
-    private AppConfig appConfig;
+public class DataModelConfigServiceImpl implements DataModelConfigService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private DatabaseService databaseService;
+
+    @Override
+    public DataModel create(DataModel dataModel) {
+        String version = dataModel.getVersion() == null ? VersionUtil.newVersionNoByNow() : dataModel.getVersion();
+        jdbcTemplate.update("insert into datamodel (id,name,module,version,`type`, configJson, memo) values (?,?,?,?,?,?,?)",
+                dataModel.getId(), dataModel.getName(), dataModel.getGroup(), version,
+                dataModel.getType(), JSON.toJSONString(dataModel), dataModel.getMemo());
+        return dataModel;
+    }
+
+    @Override
+    public DataModel createByDbTable(String dbName, String tableName) throws Exception {
+        return createByDbTable(dbName, tableName, tableName);
+    }
+
+    @Override
+    public DataModel createByDbTable(String dbName, String tableName, String dataModelId) throws Exception {
+        dbName = databaseService.getDefaultDbNameIfNull(dbName);
+        DataModel dataModel = new DataModel();
+        dataModel.setMainTable(tableName);
+        var columns = databaseService.getDbColumnList(dbName, tableName);
+        var tableMapValue = new TableAliasMap();
+//        tableMapValue.setTable(tableName);
+        tableMapValue.setStoreTable(tableName);
+//        tableMap.setColumns(columns);
+        tableMapValue.setPrimaryKey(columns.stream().filter(DataTableColumn::isStoreIsPrimaryKey).findFirst().map(DataTableColumn::getStoreColumn).orElse(""));
+        tableMapValue.setStoreDatabase(dbName);
+        LinkedHashMap<String, TableAliasMap> tableMap = new LinkedHashMap<>();
+        tableMap.put(tableName, tableMapValue);
+        dataModel.setTableMap(tableMap);
+        LinkedHashMap<String, ColumnAliasMap> columnMap = new LinkedHashMap<>();
+        columns.forEach(column -> {
+            ColumnAliasMap clmMapValue = JSONObject.parseObject(JSONObject.toJSONString(column), ColumnAliasMap.class);
+            clmMapValue.setTable(tableName);
+//            clmMapValue.setColumn(column.getStoreColumn());
+            clmMapValue.setDataType(column.getStoreDataType());
+            clmMapValue.setDataLength(column.getStoreDataLength());
+            columnMap.put(clmMapValue.getStoreColumn(), clmMapValue);
+        });
+        dataModel.setColumnMap(columnMap);
+        if (dataModelId == null) dataModelId = tableName;
+        dataModel.setId(dataModelId);
+        create(dataModel);
+        return dataModel;
+    }
+
+    @Override
+    public DataModel update(DataModel dataModel) {
+        String version = VersionUtil.newVersionNoByNow();
+        dataModel.setVersion(version);
+        var rows = jdbcTemplate.update("update datamodel set version=?, configJson = ? where id = ?", version, JSON.toJSONString(dataModel), dataModel.getId());
+        if (rows > 0)
+            return dataModel;
+        else return null;
+    }
+
+    @Override
+    public DataModel updateById(String dataModelId, DataModel dataModel) {
+        dataModel.setId(dataModelId);
+        return update(dataModel);
+    }
+
+    @Override
+    public DataModel getById(String dataModelId) {
+        try {
+            var dm = jdbcTemplate.queryForMap(
+                    "select id,name,module,version,type,configJson,memo from datamodel where id = ?",
+                    dataModelId
+            );
+            if (dm.isEmpty()) {
+                return null;
+            }
+            var json = JSONObject.from(dm);
+            var entity = json.to(DataModelEntity.class);
+            var configJson = entity.getConfigJson();
+            return JSONObject.parse(configJson).to(DataModel.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public void deleteById(String dataModelId) {
+        jdbcTemplate.execute("delete from datamodel where id = '" + dataModelId + "'");
+    }
+
+    @Override
+    public void deleteByIds(List<String> ids) {
+        String sql = "delete from datamodel where id in (" + ids.stream().map(id -> "'" + id + "'").collect(Collectors.joining(","));
+        jdbcTemplate.execute(sql);
+    }
 
     public DataModel getConfigJson(String dataModelId) {
         try {
-            var dm = getDataModelEntityOrCreate(dataModelId);
+            var dm = getDataModelEntity(dataModelId);
             if (dm != null) {
                 JSONObject defDataModel = JSONObject.parse(dm.getConfigJson());
                 return defDataModel.to(DataModel.class);
@@ -63,7 +160,7 @@ public class DataModelConfigServiceImpl {
         return dm;
     }
 
-    public void updateOrCreateConfigJson(String dataModelId, DataModel dataModel) throws Exception {
+    public DataModel updateOrCreateConfigJson(String dataModelId, DataModel dataModel) throws Exception {
         var res = updateConfigJson(dataModelId, dataModel);
         if (!res) {
             var entity = new DataModelEntity();
@@ -71,6 +168,7 @@ public class DataModelConfigServiceImpl {
             entity.setConfigJson(JSON.toJSONString(dataModel));
             createEntity(entity);
         }
+        return dataModel;
     }
 
     public boolean updateConfigJson(String dataModelId, DataModel dataModel) throws Exception {
@@ -81,11 +179,12 @@ public class DataModelConfigServiceImpl {
         //        FileUtil.writeFile(appConfig.getDATA_MODEL_DIR(), dataModelId + ".json", JSONObject.toJSONString(dataModel));
     }
 
-    public void createEntity(DataModelEntity entity) throws Exception {
+    public DataModelEntity createEntity(DataModelEntity entity) throws Exception {
         String version = entity.getVersion() == null ? VersionUtil.newVersionNoByNow() : entity.getVersion();
         jdbcTemplate.update("insert into datamodel (id,name,module,version,`type`, configJson, memo) values (?,?,?,?,?,?,?)",
                 entity.getId(), entity.getName(), entity.getModule(), version,
                 entity.getType(), entity.getConfigJson(), entity.getMemo());
+        return entity;
     }
 
     /**
@@ -100,5 +199,6 @@ public class DataModelConfigServiceImpl {
                 entity.getName(), entity.getModule(), entity.getType(), entity.getMemo(), entity.getId());
         return rows > 0;
     }
+
 
 }
