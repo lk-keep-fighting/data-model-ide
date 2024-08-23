@@ -7,8 +7,12 @@ public class OrderByColumn {
     private String column;
     private String direction;
 
+    public OrderByColumn() {
+
+    }
+
     public OrderByColumn(String alias, String direction) {
         this.column = alias;
-        this.direction=direction;
+        this.direction = direction;
     }
 }
