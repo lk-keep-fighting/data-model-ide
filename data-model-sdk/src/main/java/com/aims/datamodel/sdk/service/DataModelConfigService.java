@@ -18,6 +18,7 @@ public interface DataModelConfigService {
     DataModel updateById(String dataModelId, DataModel dataModel);
 
     DataModel getById(String dataModelId);
+    DataModel getConfigJson(String dataModelId);
 
     void deleteById(String dataModelId);
 

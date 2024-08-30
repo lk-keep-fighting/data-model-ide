@@ -10,8 +10,9 @@ public class DataTable {
     private String storeTable;
     private String storeDatabase;
     List<DataTableColumn> columns;
+
     public String storeTableNameWithDb() {
-        if (StringUtils.isEmpty(this.storeDatabase))
+        if (!StringUtils.hasText(this.storeDatabase))
             return this.storeTable;
         else return this.storeDatabase + "." + this.storeTable;
     }

@@ -20,10 +20,18 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class DataModelConfigServiceImpl implements DataModelConfigService {
+    private final JdbcTemplate jdbcTemplate;
+    private final DatabaseService databaseService;
+
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private DatabaseService databaseService;
+    public DataModelConfigServiceImpl(
+            JdbcTemplate jdbcTemplate,
+            DatabaseService databaseService
+    ) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.databaseService = databaseService;
+    }
+
 
     @Override
     public DataModel create(DataModel dataModel) {
@@ -41,10 +49,10 @@ public class DataModelConfigServiceImpl implements DataModelConfigService {
 
     @Override
     public DataModel createByDbTable(String dbName, String tableName, String dataModelId) throws Exception {
-        dbName = databaseService.getDefaultDbNameIfNull(dbName);
+        var storeDbName = databaseService.getDefaultDbNameIfNull(dbName);
         DataModel dataModel = new DataModel();
         dataModel.setMainTable(tableName);
-        var columns = databaseService.getDbColumnList(dbName, tableName);
+        var columns = databaseService.getDbColumnList(storeDbName, tableName);
         var tableMapValue = new TableAliasMap();
 //        tableMapValue.setTable(tableName);
         tableMapValue.setStoreTable(tableName);
@@ -112,7 +120,7 @@ public class DataModelConfigServiceImpl implements DataModelConfigService {
 
     @Override
     public void deleteByIds(List<String> ids) {
-        String sql = "delete from datamodel where id in (" + ids.stream().map(id -> "'" + id + "'").collect(Collectors.joining(","));
+        String sql = "delete from datamodel where id in (" + ids.stream().map(id -> "'" + id + "'").collect(Collectors.joining(",")) + ")";
         jdbcTemplate.execute(sql);
     }
 

@@ -17,8 +17,13 @@ import java.util.Map;
 @Service
 @Slf4j
 public class DatabaseServiceImpl implements DatabaseService {
+    private final JdbcTemplate jdbcTemplate;
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public DatabaseServiceImpl(
+            JdbcTemplate jdbcTemplate
+    ){
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public String getDefaultDbNameIfNull(String dbName) {
         if (!StringUtils.hasText(dbName)) dbName = getCurrentDbName();

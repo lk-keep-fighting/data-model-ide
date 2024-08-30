@@ -23,6 +23,7 @@ public interface DataStoreService {
     long updateById(String dataModelId, String id, String value);
     long updateByCondition(String dataModelId, List<DataViewCondition> conditions, String value);
     void deleteById(String dataModelId, String id);
+    void deleteByIds(String dataModelId, List<String> ids);
     void executeSql(String sql);
 
 }

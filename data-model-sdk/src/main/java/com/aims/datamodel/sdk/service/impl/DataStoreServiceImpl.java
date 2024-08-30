@@ -8,6 +8,7 @@ import com.aims.datamodel.core.sqlbuilder.input.InsertInput;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.core.sqlbuilder.input.UpdateInput;
 import com.aims.datamodel.sdk.dto.PageResult;
+import com.aims.datamodel.sdk.service.DataModelConfigService;
 import com.aims.datamodel.sdk.service.DataModelConfigServiceImpl;
 import com.aims.datamodel.sdk.service.DataStoreService;
 import com.alibaba.fastjson2.JSONArray;
@@ -24,10 +25,16 @@ import java.util.Map;
 @Service
 @Slf4j
 public class DataStoreServiceImpl implements DataStoreService {
+    private final JdbcTemplate jdbcTemplate;
+    private final DataModelConfigService dataModelConfigService;
+
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private DataModelConfigServiceImpl dataModelConfigService;
+    public DataStoreServiceImpl(
+            JdbcTemplate jdbcTemplate,
+            DataModelConfigServiceImpl databaseService) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.dataModelConfigService = databaseService;
+    }
 
     public DataModel getDataModel(String dataModelId) {
         return dataModelConfigService.getConfigJson(dataModelId);
@@ -159,6 +166,16 @@ public class DataStoreServiceImpl implements DataStoreService {
         }
         var dm = getDataModel(dataModelId);
         var sql = "delete from " + dm.buildTableSql(dm.getMainTable()) + " where " + dm.findPrimaryKey() + "='" + id + "'";
+        log.debug("delete-sql: {}", sql);
+        jdbcTemplate.execute(sql);
+    }
+
+    public void deleteByIds(String dataModelId, List<String> ids) {
+        if (ids == null) {
+            throw new RuntimeException("id is null");
+        }
+        var dm = getDataModel(dataModelId);
+        var sql = "delete from " + dm.buildTableSql(dm.getMainTable()) + " where " + dm.findPrimaryKey() + " in ('" + String.join("','", ids) + "')";
         log.debug("delete-sql: {}", sql);
         jdbcTemplate.execute(sql);
     }

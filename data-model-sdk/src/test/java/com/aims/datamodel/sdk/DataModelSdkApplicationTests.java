@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Random;
 
 @SpringBootTest
@@ -58,6 +59,13 @@ class DataModelSdkApplicationTests {
         var conditions = JSONArray.parseArray(conditionsJson, DataViewCondition.class);
         var result = dataStoreService.updateByCondition("test", conditions, "{\"name\":\"测试更新\"}");
         System.out.println(result);
+    }
+
+    @Test
+    void testDelete() {
+        dataStoreService.deleteById("test", "1");
+        List<String> ids = List.of("1", "2");
+        dataStoreService.deleteByIds("test", ids);
     }
 
     @Autowired
