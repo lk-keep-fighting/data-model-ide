@@ -115,6 +115,7 @@ public class DataStoreServiceImpl implements DataStoreService {
     }
 
     public long insert(String dataModelId, String value) {
+        if (value == null) return 0;
         var dm = getDataModel(dataModelId);
         InsertInput input = new InsertInput();
         input.setDataModel(dm);
@@ -125,6 +126,7 @@ public class DataStoreServiceImpl implements DataStoreService {
     }
 
     public long insertBatch(String dataModelId, String values) {
+        if (values == null) return 0;
         var dm = getDataModel(dataModelId);
         InsertInput input = new InsertInput();
         input.setDataModel(dm);
