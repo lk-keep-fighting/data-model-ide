@@ -42,7 +42,8 @@ class DataModelSdkApplicationTests {
     @Test
     void testBatchInsert() {
         String batch = String.valueOf(new Random().nextInt());
-        var result = dataStoreService.insertBatch("test", "[{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"}]");
+        String values = "[{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"}]";
+        var result = dataStoreService.insertBatch("test", JSONArray.parse(values));
         System.out.println(result);
     }
 

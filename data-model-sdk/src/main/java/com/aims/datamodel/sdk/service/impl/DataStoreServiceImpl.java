@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class DataStoreServiceImpl implements DataStoreService {
     }
 
     public long insert(String dataModelId, String value) {
-        if (value == null) return 0;
+        if (!StringUtils.hasText(value)) return 0;
         var dm = getDataModel(dataModelId);
         InsertInput input = new InsertInput();
         input.setDataModel(dm);
@@ -125,12 +126,12 @@ public class DataStoreServiceImpl implements DataStoreService {
         return jdbcTemplate.update(sql);
     }
 
-    public long insertBatch(String dataModelId, String values) {
-        if (values == null) return 0;
+    public long insertBatch(String dataModelId, JSONArray values) {
+        if (values == null || values.isEmpty()) return 0;
         var dm = getDataModel(dataModelId);
         InsertInput input = new InsertInput();
         input.setDataModel(dm);
-        input.setValues(JSONArray.parse(values));
+        input.setValues(values);
         var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
         log.debug("batch-insert-sql: {}", sql);
         var res = jdbcTemplate.batchUpdate(sql);

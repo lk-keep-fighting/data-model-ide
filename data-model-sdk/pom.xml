@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>data-model-sdk</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>data-model-sdk</name>
     <description>data-model-sdk</description>
     <properties>

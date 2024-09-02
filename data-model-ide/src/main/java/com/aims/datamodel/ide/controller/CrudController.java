@@ -3,6 +3,7 @@ package com.aims.datamodel.ide.controller;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.ide.controller.dto.ApiResult;
 import com.aims.datamodel.sdk.service.DataStoreService;
+import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class CrudController {
     }
 
     @PostMapping("/batchAdd")
-    public ApiResult batchAddData(@PathVariable("dataModelId") String dataModelId, @RequestBody String data) {
+    public ApiResult batchAddData(@PathVariable("dataModelId") String dataModelId, @RequestBody JSONArray data) {
         try {
             var res = dataStoreService.insertBatch(dataModelId, data);
             return new ApiResult().setData(res);
