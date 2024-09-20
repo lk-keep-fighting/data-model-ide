@@ -22,7 +22,7 @@ class DataModelCoreApplicationTests {
     void testRelaQueryJson() {
         String json = "{}";
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/query/关联查询.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/jsons/query/关联查询.json")));
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -38,7 +38,7 @@ class DataModelCoreApplicationTests {
     void testInsert() {
         String json = "{}";
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/insert/logic.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/jsons/insert/logic.json")));
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -53,7 +53,7 @@ class DataModelCoreApplicationTests {
     void testBatchInsert() {
         String json = "{}";
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/insert/logics.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/jsons/insert/logics.json")));
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -66,7 +66,20 @@ class DataModelCoreApplicationTests {
     void testBatchInsert2() {
         String json = "{}";
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/insert/lapp_menu.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/jsons/insert/lapp_menu.json")));
+        } catch (IOException e) {
+            System.out.println("Failed to read JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        InsertInput input = JSONObject.parseObject(json, InsertInput.class);
+        var sql = InsertBuilder.buildBatchInsertSqlByInput(input);
+        System.out.println(sql);
+    }
+    @Test
+    void testBatchInsertLogic() {
+        String json = "{}";
+        try {
+            json = new String(Files.readAllBytes(Paths.get("src/main/jsons/insert/batchInsertLogic.json")));
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();
@@ -80,7 +93,7 @@ class DataModelCoreApplicationTests {
     void testUpdate() {
         String json = "{}";
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/jsons/update/logic.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/jsons/update/logic.json")));
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();

@@ -85,8 +85,9 @@ public class InsertBuilder {
                         if (v == null)
                             return "NULL";
                         else
+//                            return "'" + v + "'";
                             // 确保字符串值被引号包围，并且转义单引号
-                            return "'" + v.replace("'", "\\'") + "'";
+                            return "'" + v.replace("'", "''").replace("\\", "\\\\") + "'";
                     })
                     .collect(Collectors.toList());
             valuesJoiner.add("(" + String.join(", ", valueStrs) + ")");
@@ -102,7 +103,7 @@ public class InsertBuilder {
         var insertColumns = inputJson.keySet().stream().map(dataModel::findStoreColumnSqlName).collect(Collectors.joining(","));
         sb.append(insertColumns).append(") values(");
         inputJson.forEach((key, value) -> {
-            sb.append("'").append(value == null ? null : value.toString().replace("'", "''")).append("',");
+            sb.append("'").append(value == null ? null : value.toString().replace("'", "''").replace("\\", "\\\\")).append("',");
         });
         sb.deleteCharAt(sb.length() - 1);
         sb.append(")");
