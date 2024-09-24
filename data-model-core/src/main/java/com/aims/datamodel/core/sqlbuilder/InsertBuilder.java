@@ -42,25 +42,25 @@ public class InsertBuilder {
 //        return input.getValues().stream().map(value -> buildOneInsertSql(dataModel, JSONObject.from(value))).collect(Collectors.toList());
 //    }
 
-    public static String buildParamBatchInsertSqlByInput(InsertInput input) {
-        StringBuilder sb = new StringBuilder();
-        var dataModel = input.getDataModel();
-        sb.append("insert into ").append(dataModel.getMainTable()).append("(");
-        if (input.getValues() == null) return "";
-        var values = input.getValues();
-        var insertColumns = JSONObject.from(input.getValues().get(0)).keySet().stream().map(dataModel::findStoreColumnName).collect(Collectors.joining(","));
-        sb.append(insertColumns).append(") values");
-        String placeHolders = String.join(",", Collections.nCopies(values.size(), "(" + String.join(",", Collections.nCopies(insertColumns.split(",").length, "?")) + ")"));
-        sb.append(placeHolders);
-
-        // 将构建好的SQL语句返回
-        return sb.toString();
-    }
+//    public static String buildParamBatchInsertSqlByInput(InsertInput input) {
+//        StringBuilder sb = new StringBuilder();
+//        var dataModel = input.getDataModel();
+//        sb.append("insert into ").append(dataModel.getMainTable()).append("(");
+//        if (input.getValues() == null) return "";
+//        var values = input.getValues();
+//        var insertColumns = JSONObject.from(input.getValues().get(0)).keySet().stream().map(dataModel::findStoreColumnName).collect(Collectors.joining(","));
+//        sb.append(insertColumns).append(") values");
+//        String placeHolders = String.join(",", Collections.nCopies(values.size(), "(" + String.join(",", Collections.nCopies(insertColumns.split(",").length, "?")) + ")"));
+//        sb.append(placeHolders);
+//
+//        // 将构建好的SQL语句返回
+//        return sb.toString();
+//    }
 
     public static String buildBatchInsertSqlByInput(InsertInput input) {
         StringBuilder sb = new StringBuilder();
         var dataModel = input.getDataModel();
-        sb.append("insert into ").append(dataModel.getMainTable()).append("(");
+        sb.append("insert into ").append(dataModel.buildTableSql(dataModel.getMainTable())).append("(");
         if (input.getValues() == null) return "";
         var values = input.getValues();
         List<String> columnNames;
