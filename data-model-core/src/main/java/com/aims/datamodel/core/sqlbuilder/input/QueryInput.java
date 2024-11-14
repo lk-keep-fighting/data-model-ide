@@ -79,6 +79,10 @@ public class QueryInput {
         if (limitIdx != -1) {//去除limit
             pageSql = pageSql.substring(0, limitIdx - 1);
         }
+        int orderByIdx = pageSql.indexOf("ORDER BY");
+        if (orderByIdx != -1) {//去除order by
+            pageSql = pageSql.substring(0, orderByIdx - 1);
+        }
         if (pageSql.toUpperCase().contains("GROUP BY")) {
             countSql.append("FROM (").append(pageSql).append(") AS t");
         } else {
