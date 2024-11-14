@@ -57,14 +57,15 @@ public class DataStoreServiceImpl implements DataStoreService {
         return queryByInput(dataModelId, query);
     }
 
-    public List<Map<String, Object>> query(String dataModelId, String queryJson) {
-        var dm = getDataModel(dataModelId);
-        var query = queryJson == null ? new QueryInput() : JSONObject.parseObject(queryJson, QueryInput.class);
-        query.setFrom(dm);
-        return queryByInput(dataModelId, query);
-    }
+//    public List<Map<String, Object>> query(String dataModelId, String queryJson) {
+//        var dm = getDataModel(dataModelId);
+//        var query = queryJson == null ? new QueryInput() : JSONObject.parseObject(queryJson, QueryInput.class);
+//        query.setFrom(dm);
+//        return queryByInput(dataModelId, query);
+//    }
 
     public List<Map<String, Object>> queryByInput(String dataModelId, QueryInput queryInput) {
+        if (queryInput == null) queryInput = new QueryInput();
         var dm = getDataModel(dataModelId);
         queryInput.setFrom(dm);
         queryInput.setPage(0);
@@ -115,12 +116,11 @@ public class DataStoreServiceImpl implements DataStoreService {
         return new PageResult(items, totalCount, queryInput.getPage(), queryInput.getPageSize());
     }
 
-    public long insert(String dataModelId, String value) {
-        if (!StringUtils.hasText(value)) return 0;
+    public long insert(String dataModelId, JSONObject value) {
         var dm = getDataModel(dataModelId);
         InsertInput input = new InsertInput();
         input.setDataModel(dm);
-        input.setValue(JSONObject.parse(value));
+        input.setValue(value);
         var sql = InsertBuilder.buildByInput(input);
         log.debug("insert-sql: {}", sql);
         return jdbcTemplate.update(sql);
@@ -138,7 +138,7 @@ public class DataStoreServiceImpl implements DataStoreService {
         return res.length;
     }
 
-    public long updateById(String dataModelId, String id, String value) {
+    public long updateById(String dataModelId, String id, JSONObject value) {
         if (id == null) {
             throw new RuntimeException("id is null");
         }
@@ -146,18 +146,18 @@ public class DataStoreServiceImpl implements DataStoreService {
         UpdateInput input = new UpdateInput();
         input.setDataModel(dm);
         input.setId(id);
-        input.setValue(JSONObject.parse(value));
+        input.setValue(value);
         var sql = UpdateBuilder.buildByInput(input);
         log.debug("update-sql: {}", sql);
         return jdbcTemplate.update(sql);
     }
 
-    public long updateByCondition(String dataModelId, List<DataViewCondition> conditions, String value) {
+    public long updateByCondition(String dataModelId, List<DataViewCondition> conditions, JSONObject value) {
         var dm = getDataModel(dataModelId);
         UpdateInput input = new UpdateInput();
         input.setDataModel(dm);
         input.setConditions(conditions);
-        input.setValue(JSONObject.parse(value));
+        input.setValue(value);
         var sql = UpdateBuilder.buildByInput(input);
         log.debug("update-sql: {}", sql);
         return jdbcTemplate.update(sql);

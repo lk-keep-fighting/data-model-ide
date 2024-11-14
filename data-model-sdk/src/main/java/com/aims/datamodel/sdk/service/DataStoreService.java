@@ -5,6 +5,7 @@ import com.aims.datamodel.core.dsl.DataViewCondition;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.sdk.dto.PageResult;
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,15 +15,15 @@ public interface DataStoreService {
     DataModel getDataModel(String dataModelId);
     Map<String, Object> queryById(String dataModelId, String id);
     List<Map<String, Object>> queryByIds(String dataModelId, List<String>ids);
-    List<Map<String, Object>> query(String dataModelId, String queryJson);
+//    List<Map<String, Object>> query(String dataModelId, String queryJson);
     List<Map<String, Object>> queryByInput(String dataModelId, QueryInput queryInput);
     List<Map<String, Object>> queryBySql(String sql);
     PageResult queryPageBySql(String sql, int page, long pageSize);
     PageResult queryPageByInput(String dataModelId, QueryInput queryInput);
-    long insert(String dataModelId, String value);
+    long insert(String dataModelId, JSONObject value);
     long insertBatch(String dataModelId, JSONArray values);
-    long updateById(String dataModelId, String id, String value);
-    long updateByCondition(String dataModelId, List<DataViewCondition> conditions, String value);
+    long updateById(String dataModelId, String id, JSONObject value);
+    long updateByCondition(String dataModelId, List<DataViewCondition> conditions, JSONObject value);
     void deleteById(String dataModelId, String id);
     void deleteByIds(String dataModelId, List<String> ids);
     void executeSql(String sql);

@@ -1,6 +1,7 @@
 package com.aims.datamodel.sdk;
 
 import com.aims.datamodel.core.dsl.DataViewCondition;
+import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.sdk.service.DataModelConfigService;
 import com.aims.datamodel.sdk.service.DataStoreService;
 import com.alibaba.fastjson2.JSONArray;
@@ -22,20 +23,24 @@ class DataModelSdkApplicationTests {
 
     //    @Test
     void contextLoads() {
-        String json = "{}";
+        QueryInput queryInput = new QueryInput();
         try {
+            String json = "{}";
             json = new String(Files.readAllBytes(Paths.get("src/main/resources/json/query/wcs_log.json")));
+            queryInput = JSONObject.parseObject(json, QueryInput.class);
         } catch (IOException e) {
             System.out.println("Failed to read JSON file: " + e.getMessage());
             e.printStackTrace();
         }
-        var result = dataStoreService.query("wcs_log", json);
+        var result = dataStoreService.queryByInput("wcs_log", queryInput);
         System.out.println(result.stream().count());
     }
 
     @Test
     void testInsert() {
-        var result = dataStoreService.insert("test", "{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"测试\"}");
+        String json = "{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"测试\"}";
+        var value = JSONObject.parseObject(json);
+        var result = dataStoreService.insert("test", value);
         System.out.println(result);
     }
 
@@ -58,7 +63,9 @@ class DataModelSdkApplicationTests {
     void testUpdate() {
         var conditionsJson = "[{\"column\":\"id\",\"operator\":\"=\",\"value\":\"5\"}]";
         var conditions = JSONArray.parseArray(conditionsJson, DataViewCondition.class);
-        var result = dataStoreService.updateByCondition("test", conditions, "{\"name\":\"测试更新\"}");
+        var json = "{\"name\":\"测试更新\"}";
+        var value = JSONObject.parseObject(json);
+        var result = dataStoreService.updateByCondition("test", conditions, value);
         System.out.println(result);
     }
 
@@ -74,13 +81,14 @@ class DataModelSdkApplicationTests {
 
     @Test
     void testQuery() {
-        var result = dataStoreService.query("test", null);
+        var result = dataStoreService.queryByInput("test", null);
         System.out.println(result.stream().count());
     }
 
     @Test
     void testSaveTableToDataModel() {
         try {
+            dataModelConfigService.deleteById("datamodel.test");
             dataModelConfigService.createByDbTable("datamodel", "test");
         } catch (Exception e) {
             e.printStackTrace();

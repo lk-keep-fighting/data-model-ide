@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>data-model-ide</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
     <name>data-model-ide</name>
     <description>data-model-ide</description>
     <properties>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.aims.datamodel</groupId>
             <artifactId>data-model-sdk</artifactId>
-            <version>0.1.3-SNAPSHOT</version>
+            <version>0.2.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

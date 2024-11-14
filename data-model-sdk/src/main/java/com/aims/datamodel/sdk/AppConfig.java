@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AppConfig {
-    @Value("${data-model.config-dir}")
+    @Value("${data-model.config-dir:./datamodel-configs}")
     private String CONFIG_DIR;
     /**
      * 数据模型子目录

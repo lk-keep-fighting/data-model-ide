@@ -4,6 +4,7 @@ import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.ide.controller.dto.ApiResult;
 import com.aims.datamodel.sdk.service.DataStoreService;
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class CrudController {
     DataStoreService dataStoreService;
 
     @PostMapping("/add")
-    public ApiResult addData(@PathVariable("dataModelId") String dataModelId, @RequestBody String data) {
+    public ApiResult addData(@PathVariable("dataModelId") String dataModelId, @RequestBody JSONObject data) {
         try {
             var res = dataStoreService.insert(dataModelId, data);
             return new ApiResult().setData(res);
@@ -38,7 +39,7 @@ public class CrudController {
     }
 
     @PutMapping("/edit/{dataId}")
-    public ApiResult editData(@PathVariable("dataModelId") String dataModelId, @PathVariable("dataId") String dataId, @RequestBody String data) {
+    public ApiResult editData(@PathVariable("dataModelId") String dataModelId, @PathVariable("dataId") String dataId, @RequestBody JSONObject data) {
         try {
             var res = dataStoreService.updateById(dataModelId, dataId, data);
             return new ApiResult().setData(res);
