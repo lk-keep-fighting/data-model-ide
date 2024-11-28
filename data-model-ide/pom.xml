@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>data-model-ide</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>${data-model-ide.version}</version>
     <name>data-model-ide</name>
     <description>data-model-ide</description>
     <properties>
@@ -19,7 +19,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -28,17 +27,14 @@
         <dependency>
             <groupId>com.aims.datamodel</groupId>
             <artifactId>data-model-sdk</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${data-model-sdk.version}</version>
         </dependency>
-
 <!--        <dependency>-->
 <!--            <groupId>io.springfox</groupId>-->
 <!--            <artifactId>springfox-boot-starter</artifactId>-->
 <!--            <version>3.0.0</version>-->
 <!--        </dependency>-->
     </dependencies>
-
 <!--    <build>-->
 <!--        <plugins>-->
 <!--            <plugin>-->
