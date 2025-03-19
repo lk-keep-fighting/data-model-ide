@@ -28,6 +28,18 @@ public class DataTableColumn {
     private String storeComment;
     private int storePrecision;
     private int storeScale;
-    private boolean storeIsNullable;
+    private boolean storeIsNullable = true;
     private boolean storeIsPrimaryKey;
+
+    public String storeColumnType() {
+        if (storeDataType == null) {
+            return "varchar(100)";
+        }
+        return storeDataType + "(" + storeDataLength + ")";
+    }
+
+    public boolean isStoreIsNullable() {
+        if (isStoreIsPrimaryKey()) return false;
+        return storeIsNullable;
+    }
 }

@@ -1,5 +1,6 @@
 package com.aims.datamodel.sdk.service;
 
+import com.aims.datamodel.core.dsl.DataModel;
 import com.aims.datamodel.core.dsl.DataTableColumn;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface DatabaseService {
     List<Map<String, Object>> getDbTableList(String dbName);
 
     List<DataTableColumn> getDbColumnList(String dbName, String tableName);
+
+    String createTableByDataModel(DataModel dataModel);
 }

@@ -66,7 +66,7 @@ public class InsertBuilder {
         List<String> columnNames;
         if (dataModel.getColumns() != null && dataModel.getColumns().size() > 0) {
             columnNames = dataModel.getColumns().stream()
-                    .map(DataModelColumn::findStoreColumnName)
+                    .map(c -> dataModel.findStoreColumnName(c.getColumn()))
                     .collect(Collectors.toList());
         } else {
             columnNames = JSONObject.from(values.get(0)).keySet().stream()
@@ -79,17 +79,32 @@ public class InsertBuilder {
         StringJoiner valuesJoiner = new StringJoiner(", ");
         for (var value : values) {
             var jsonValue = JSONObject.from(value);
-            List<String> valueStrs = columnNames.stream()
-                    .map(column -> {
-                        String v = jsonValue.getString(column);
-                        if (v == null)
-                            return "NULL";
-                        else
+            List<String> valueStrs;
+            if (dataModel.getColumns() != null) {// 模型有列定义时，使用列定义的列名
+                valueStrs = dataModel.getColumns().stream()
+                        .map(column -> {
+                            String v = jsonValue.getString(column.getColumn());
+                            if (v == null)
+                                return "NULL";
+                            else
 //                            return "'" + v + "'";
-                            // 确保字符串值被引号包围，并且转义单引号
-                            return "'" + v.replace("'", "''").replace("\\", "\\\\") + "'";
-                    })
-                    .collect(Collectors.toList());
+                                // 确保字符串值被引号包围，并且转义单引号
+                                return "'" + v.replace("'", "''").replace("\\", "\\\\") + "'";
+                        })
+                        .collect(Collectors.toList());
+            } else {// 模型没有列定义时，使用传入的json的键值，但可能会出现列名不匹配的情况
+                valueStrs = columnNames.stream()
+                        .map(column -> {
+                            String v = jsonValue.getString(column);
+                            if (v == null)
+                                return "NULL";
+                            else
+//                            return "'" + v + "'";
+                                // 确保字符串值被引号包围，并且转义单引号
+                                return "'" + v.replace("'", "''").replace("\\", "\\\\") + "'";
+                        })
+                        .collect(Collectors.toList());
+            }
             valuesJoiner.add("(" + String.join(", ", valueStrs) + ")");
         }
         sb.append(valuesJoiner);

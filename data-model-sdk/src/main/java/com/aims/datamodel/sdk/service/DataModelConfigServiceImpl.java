@@ -1,10 +1,10 @@
 package com.aims.datamodel.sdk.service;
 
-import com.aims.datamodel.core.dsl.ColumnAliasMap;
-import com.aims.datamodel.core.dsl.DataModel;
-import com.aims.datamodel.core.dsl.DataTableColumn;
-import com.aims.datamodel.core.dsl.TableAliasMap;
+import com.aims.datamodel.core.dsl.*;
+import com.aims.datamodel.core.sqlbuilder.input.Column;
 import com.aims.datamodel.sdk.entity.DataModelEntity;
+import com.aims.datamodel.sdk.utils.PinyinUtil;
+import com.aims.datamodel.sdk.utils.RandomUtil;
 import com.aims.datamodel.sdk.utils.VersionUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -12,9 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +48,53 @@ public class DataModelConfigServiceImpl implements DataModelConfigService {
     }
 
     @Override
+    public DataModel createByJsonData(String dataModelId, String primaryColumn, List<JSONObject> jsonData, String dbName, String tableName) throws Exception {
+        try {
+            var storeDbName = databaseService.getDefaultDbNameIfNull(dbName);
+            if (!StringUtils.hasText(tableName))
+                tableName = dataModelId;
+            DataModel dataModel = new DataModel();
+            dataModel.setId(dataModelId);
+            dataModel.setMainTable(tableName);
+            TableAliasMap tableMapValue = new TableAliasMap();
+            tableMapValue.setStoreTable(tableName);
+            tableMapValue.setStoreDatabase(storeDbName);
+            dataModel.getTableMap().put(tableName, tableMapValue);
+            List<DataModelColumn> columns = new ArrayList<>();
+            var exampleData = jsonData.get(0);
+            exampleData.keySet().forEach(key -> {
+                DataModelColumn column = new DataModelColumn();
+                String clmStoreName = PinyinUtil.toPurePinyin(key);
+                if (clmStoreName.length() > 10) {
+                    clmStoreName = PinyinUtil.getFirstLetters(key);
+                    if (clmStoreName.length() > 10) {
+                        clmStoreName = clmStoreName.substring(0, 10) + RandomUtil.getRandomNumber(3);
+                    }
+                }
+                column.setColumn(key);
+                ColumnAliasMap clmMap = new ColumnAliasMap();
+                if (key.equals(primaryColumn)) {
+                    clmMap.setStoreIsPrimaryKey(true);
+                }
+                clmMap.setStoreColumn(clmStoreName);
+                columns.add(column);
+                dataModel.getColumnMap().put(key, clmMap);
+            });
+            dataModel.setColumns(columns);
+            create(dataModel);
+            return dataModel;
+        } catch (Exception e) {
+            log.error("createByJsonData error", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public DataModel createByJsonData(String dataModelId, String primaryColumn, List<JSONObject> jsonData) throws Exception {
+        return createByJsonData(dataModelId, primaryColumn, jsonData, null, null);
+    }
+
+    @Override
     public DataModel createByDbTable(String dbName, String tableName, String dataModelId) throws Exception {
         var storeDbName = databaseService.getDefaultDbNameIfNull(dbName);
         DataModel dataModel = new DataModel();
@@ -67,8 +114,8 @@ public class DataModelConfigServiceImpl implements DataModelConfigService {
             ColumnAliasMap clmMapValue = JSONObject.parseObject(JSONObject.toJSONString(column), ColumnAliasMap.class);
             clmMapValue.setTable(tableName);
 //            clmMapValue.setColumn(column.getStoreColumn());
-            clmMapValue.setDataType(column.getStoreDataType());
-            clmMapValue.setDataLength(column.getStoreDataLength());
+            clmMapValue.setStoreDataType(column.getStoreDataType());
+            clmMapValue.setStoreDataLength(column.getStoreDataLength());
             columnMap.put(clmMapValue.getStoreColumn(), clmMapValue);
         });
         dataModel.setColumnMap(columnMap);

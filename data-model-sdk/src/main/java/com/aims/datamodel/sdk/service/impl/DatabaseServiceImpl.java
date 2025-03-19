@@ -18,10 +18,11 @@ import java.util.Map;
 @Slf4j
 public class DatabaseServiceImpl implements DatabaseService {
     private final JdbcTemplate jdbcTemplate;
+
     @Autowired
     public DatabaseServiceImpl(
             JdbcTemplate jdbcTemplate
-    ){
+    ) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -99,6 +100,35 @@ public class DatabaseServiceImpl implements DatabaseService {
         jdbcTemplate.execute(sql);
     }
 
+    @Override
+    public String createTableByDataModel(DataModel dataModel) {
+        String primaryKey = null;
+        String sql = "CREATE TABLE " + dataModel.buildTableSql(dataModel.getMainTable()) + " (\n";
+        for (DataModelColumn column : dataModel.getColumns()) {
+            ColumnAliasMap clmMapValue = dataModel.findColumnAliasMap(column.getColumn());
+            sql += "  `" + dataModel.findStoreColumnName(column.getColumn()) + "` " + clmMapValue.storeColumnType() + "\n";
+            if (clmMapValue.isStoreIsNullable()) {
+                sql += "  NULL\n";
+            } else {
+                sql += "  NOT NULL\n";
+            }
+            if (clmMapValue.isStoreIsPrimaryKey()) primaryKey = clmMapValue.getStoreColumn();
+            if (clmMapValue.getStoreDefaultValue() != null) {
+                sql += "  DEFAULT '" + clmMapValue.getStoreDefaultValue() + "'\n";
+            }
+            sql += "  COMMENT '" + clmMapValue.getStoreComment() + "',\n";
+        }
+        sql = sql.substring(0, sql.length() - 2);
+        if (primaryKey != null) {
+            sql += ",\n  PRIMARY KEY (`" + primaryKey + "`)";
+        }
+
+        sql += ")";
+        jdbcTemplate.execute(sql);
+        return sql;
+
+    }
+
     /**
      * 查询指定数据库的table清单
      * 使用getDbTableList
@@ -107,4 +137,5 @@ public class DatabaseServiceImpl implements DatabaseService {
     public List<Map<String, Object>> getTableList(String dbName) {
         return queryBySql("SELECT TABLE_NAME as id,TABLE_NAME as tableName FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + dbName + "'");
     }
+
 }

@@ -1,9 +1,12 @@
 package com.aims.datamodel.sdk;
 
 import com.aims.datamodel.core.dsl.DataViewCondition;
+import com.aims.datamodel.core.sqlbuilder.QueryBuilder;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.sdk.service.DataModelConfigService;
 import com.aims.datamodel.sdk.service.DataStoreService;
+import com.aims.datamodel.sdk.service.DatabaseService;
+import com.aims.datamodel.sdk.utils.PinyinUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @SpringBootTest
@@ -47,8 +51,8 @@ class DataModelSdkApplicationTests {
     @Test
     void testBatchInsert() {
         String batch = String.valueOf(new Random().nextInt());
-        String values = "[{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"name\":\"批量测试" + batch + "\"}]";
-        var result = dataStoreService.insertBatch("test", JSONArray.parse(values));
+        String values = "[{\"id\":\"" + new Random().nextInt() + "\",\"名称\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"名称\":\"批量测试" + batch + "\"},{\"id\":\"" + new Random().nextInt() + "\",\"名称\":\"批量测试" + batch + "\"}]";
+        var result = dataStoreService.insertBatch("test2view3", JSONArray.parse(values));
         System.out.println(result);
     }
 
@@ -94,4 +98,31 @@ class DataModelSdkApplicationTests {
             e.printStackTrace();
         }
     }
+
+    //    @Test
+    void testCreateByJsonData() throws Exception {
+        List<JSONObject> json = List.of(
+                JSONObject.of("id", 1, "名称", "测试"),
+                JSONObject.of("id", 2, "名称", "测试2")
+        );
+        var dataModel = dataModelConfigService.createByJsonData("test2view3", "id", json);
+        var sql = QueryBuilder.build(new QueryInput().setFrom(dataModel));
+        System.out.println(sql);
+    }
+
+    @Autowired
+    DatabaseService databaseService;
+
+    //    @Test
+    void testCreateTableByDataModel() {
+        var sql = databaseService.createTableByDataModel(dataModelConfigService.getById("test2view3"));
+        System.out.println(sql);
+    }
+
+    @Test
+    void testPinyin() {
+        var res = PinyinUtil.getFirstLetters("测试");
+        System.out.println(res);
+    }
+
 }

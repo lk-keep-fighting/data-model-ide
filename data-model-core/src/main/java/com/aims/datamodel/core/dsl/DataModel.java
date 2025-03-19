@@ -1,15 +1,12 @@
 package com.aims.datamodel.core.dsl;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Accessors(chain = true)
 @Data
@@ -29,8 +26,20 @@ public class DataModel {
 
     public String findPrimaryKey() {
         var mapValue = tableMap.get(this.mainTable);
-        if (mapValue == null) return "id";
-        return mapValue.findPrimaryKey();
+        if (mapValue != null && mapValue.getPrimaryKey() != null)
+            return mapValue.getPrimaryKey();
+        AtomicReference<String> key = new AtomicReference<>();
+        if (!columnMap.isEmpty()) {
+            columnMap.forEach((k, v) -> {
+                if (v.isStoreIsPrimaryKey()) {
+                    key.set(v.getStoreColumn());
+                }
+            });
+        }
+        if (key.get() != null) {
+            return key.get();
+        }
+        return "id";
     }
 
     public String buildPrimaryKeySql() {
@@ -64,6 +73,14 @@ public class DataModel {
             columnName = mapValue.getStoreColumn() == null ? column : mapValue.getStoreColumn();
         }
         return columnName;
+    }
+
+    public ColumnAliasMap findColumnAliasMap(String column) {
+        var mapValue = columnMap.get(column);
+        if (mapValue != null) {
+            return mapValue;
+        }
+        return null;
     }
 
     /**
