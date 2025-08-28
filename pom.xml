@@ -16,7 +16,7 @@
     <description>data-model-solution</description>
     <properties>
         <java.version>17</java.version>
-        <revision>0.3.1-SNAPSHOT</revision>
+        <revision>0.3.2-SNAPSHOT</revision>
         <data-model-core.version>${revision}</data-model-core.version>
         <data-model-sdk.version>${revision}</data-model-sdk.version>
         <data-model-ide.version>${revision}</data-model-ide.version>
