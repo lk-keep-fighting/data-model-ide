@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface DataModelConfigService {
+
+    List<String> list();
+
     DataModel create(DataModel dataModel);
 
     DataModel createByDbTable(String dbName, String tableName) throws Exception;

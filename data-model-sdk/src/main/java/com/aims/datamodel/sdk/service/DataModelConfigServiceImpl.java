@@ -34,6 +34,12 @@ public class DataModelConfigServiceImpl implements DataModelConfigService {
 
 
     @Override
+    public List<String> list() {
+        String sql = "select id from datamodel";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("id"));
+    }
+
+    @Override
     public DataModel create(DataModel dataModel) {
         String version = dataModel.getVersion() == null ? VersionUtil.newVersionNoByNow() : dataModel.getVersion();
         jdbcTemplate.update("insert into datamodel (id,name,module,version,`type`, configJson, memo) values (?,?,?,?,?,?,?)",

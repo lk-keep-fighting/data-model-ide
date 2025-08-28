@@ -1,7 +1,6 @@
 package com.aims.datamodel.core.sqlbuilder.input;
 
 import com.aims.datamodel.core.dsl.DataModel;
-import com.aims.datamodel.core.dsl.DataViewAliasMap;
 import com.aims.datamodel.core.dsl.DataViewCondition;
 import com.aims.datamodel.core.dsl.DataViewJoin;
 import lombok.Data;

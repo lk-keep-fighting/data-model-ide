@@ -14,7 +14,7 @@ public class SqlController {
     @Autowired
     DatabaseServiceImpl dbService;
 
-    @PostMapping("/query")
+    @PostMapping("/api/data-model/sql/query")
     public ApiResult queryData(@RequestBody SqlQueryInput input) {
         try {
             var sql = input.getSql();

@@ -6,6 +6,7 @@ import lombok.Data;
 public class Column {
     private String column;
     private String aggregate;
+    private String order;
 
     public Column() {
     }

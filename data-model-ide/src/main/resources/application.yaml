@@ -1,7 +1,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/logic_demo?useUnicode=true&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=false
+#    url: jdbc:mysql://localhost:3306/datamodel?useUnicode=true&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=false
+    url: jdbc:mysql://localhost:3306/logic_cbb?useUnicode=true&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=false
     username: root
     password: 12#$qwER
   mvc:
