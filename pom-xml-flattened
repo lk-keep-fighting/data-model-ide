@@ -9,7 +9,7 @@
   </parent>
   <groupId>com.aims.datamodel</groupId>
   <artifactId>data-model-solution</artifactId>
-  <version>0.3.1-SNAPSHOT</version>
+  <version>0.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>data-model-solution</name>
   <description>data-model-solution</description>
@@ -35,11 +35,11 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <data-model-ide.version>0.3.1-SNAPSHOT</data-model-ide.version>
+    <data-model-ide.version>0.3.2-SNAPSHOT</data-model-ide.version>
     <java.version>17</java.version>
-    <data-model-core.version>0.3.1-SNAPSHOT</data-model-core.version>
-    <data-model-sdk.version>0.3.1-SNAPSHOT</data-model-sdk.version>
-    <revision>0.3.1-SNAPSHOT</revision>
+    <data-model-core.version>0.3.2-SNAPSHOT</data-model-core.version>
+    <data-model-sdk.version>0.3.2-SNAPSHOT</data-model-sdk.version>
+    <revision>0.3.2-SNAPSHOT</revision>
   </properties>
   <dependencies>
     <dependency>

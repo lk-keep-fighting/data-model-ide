@@ -1,5 +1,6 @@
 package com.aims.datamodel.ide.controller;
 
+import com.aims.datamodel.core.dsl.DataModel;
 import com.aims.datamodel.core.sqlbuilder.input.QueryInput;
 import com.aims.datamodel.ide.controller.dto.ApiResult;
 import com.aims.datamodel.sdk.service.DataStoreService;

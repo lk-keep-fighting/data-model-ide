@@ -30,11 +30,22 @@ public class DataModelController {
     }
 
 
-
     @PostMapping("/createOrSave/{dataModelId}")
     public ApiResult saveDataModel(@PathVariable("dataModelId") String dataModelId, @RequestBody DataModel dataModel) throws Exception {
         dataModel.setId(dataModelId);
         dataModelService.create(dataModel);
+        return ApiResult.ok(0);
+    }
+
+    @PostMapping("/autoCreate/db/{dbName}/table/{tableName}")
+    public ApiResult saveDbTableToFile(@PathVariable("dbName") String dbName, @PathVariable("tableName") String tableName) throws Exception {
+        dataModelService.createByDbTable(dbName, tableName);
+        return ApiResult.ok(0);
+    }
+
+    @PostMapping("/autoCreate/table/{tableName}")
+    public ApiResult saveTableToFile(@PathVariable("tableName") String tableName) throws Exception {
+        dataModelService.createByDbTable(null, tableName);
         return ApiResult.ok(0);
     }
 }

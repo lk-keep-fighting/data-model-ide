@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.aims.datamodel</groupId>
     <artifactId>data-model-solution</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.2-SNAPSHOT</version>
   </parent>
   <groupId>com.aims.datamodel</groupId>
   <artifactId>data-model-core</artifactId>
-  <version>0.3.1-SNAPSHOT</version>
+  <version>0.3.2-SNAPSHOT</version>
   <name>data-model-core</name>
   <description>data-model-core</description>
   <licenses>
