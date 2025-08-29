@@ -28,7 +28,7 @@ public class CrudController {
         }
     }
 
-    @PostMapping("/batchAdd")
+    @PostMapping("/batch-add")
     public ApiResult batchAddData(@PathVariable("dataModelId") String dataModelId, @RequestBody JSONArray data) {
         try {
             var res = dataStoreService.insertBatch(dataModelId, data);
@@ -73,7 +73,7 @@ public class CrudController {
         }
     }
 
-    @PostMapping("/queryPage")
+    @PostMapping("/query-page")
     public ApiResult queryPageData(@PathVariable("dataModelId") String dataModelId, @RequestBody QueryInput queryInput) {
         try {
             var res = dataStoreService.queryPageByInput(dataModelId, queryInput);

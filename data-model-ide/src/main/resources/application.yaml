@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/datamodel?useUnicode=true&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=false
+    #    url: jdbc:mysql://localhost:3306/datamodel?useUnicode=true&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=false
     url: jdbc:mysql://192.168.154.154:3306/xuanwu?useUnicode=true&characterEncoding=gbk&autoReconnect=true&failOverReadOnly=false
     username: root
     password: root
@@ -15,4 +15,13 @@ data-model:
 logging:
   level:
     debug: debug
+springdoc:
+  api-docs:
+    enabled: true # 开启OpenApi接口
+    path: /v3/api-docs  # 自定义路径，默认为 "/v3/api-docs"
+  swagger-ui:
+    enabled: true # 开启swagger界面，依赖OpenApi，需要OpenApi同时开启
+    path: /doc.html # 自定义路径，默认为"/swagger-ui/index.html"
+    # Packages to include,多个用 , 分割
+#    packagesToScan: zero.magebyte.magebyte.swagger.controller
 

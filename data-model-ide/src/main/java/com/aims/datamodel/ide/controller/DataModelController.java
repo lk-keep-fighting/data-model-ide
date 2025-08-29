@@ -23,6 +23,12 @@ public class DataModelController {
         return ApiResult.ok(data);
     }
 
+    @DeleteMapping("/delete/{dataModelId}")
+    public ApiResult deleteDataModel(@PathVariable("dataModelId") String dataModelId) {
+        dataModelService.deleteById(dataModelId);
+        return ApiResult.ok(dataModelId);
+    }
+
     @GetMapping("/list")
     public ApiResult list() {
         var data = dataModelService.list();
