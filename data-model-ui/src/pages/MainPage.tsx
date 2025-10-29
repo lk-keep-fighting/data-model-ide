@@ -1,36 +1,53 @@
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState, useEffect } from 'react';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { Header } from '@/components/layout/Header';
 import { DatabaseList } from '@/components/database/DatabaseList';
-import { DataModelList } from '@/components/datamodel/DataModelList';
 import { DataModelEditor } from '@/components/datamodel/DataModelEditor';
 import { CrudDataManager } from '@/components/crud/CrudDataManager';
 import { DataModel } from '@/types/api';
 import { dataModelApi } from '@/services/api';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
+type ViewMode = 'crud' | 'database' | 'settings';
 
 export const MainPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('database');
+  const [viewMode, setViewMode] = useState<ViewMode>('crud');
+  const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+  const [currentModel, setCurrentModel] = useState<DataModel | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingModel, setEditingModel] = useState<DataModel | null>(null);
-  const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+  const [databaseDialogOpen, setDatabaseDialogOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleCreateFromDb = async (dbName: string, tableName: string) => {
+  useEffect(() => {
+    if (selectedModelId) {
+      loadCurrentModel();
+    }
+  }, [selectedModelId]);
+
+  const loadCurrentModel = async () => {
+    if (!selectedModelId) return;
     try {
-      const result = await dataModelApi.autoCreateFromDb(dbName, tableName);
-      if (result.code === 0) {
-        alert('模型创建成功');
-        setActiveTab('model');
-        setRefreshKey(k => k + 1);
+      const result = await dataModelApi.get(selectedModelId);
+      if (result.code === 0 && result.data) {
+        setCurrentModel(result.data);
       }
     } catch (error) {
-      console.error('Failed to create model:', error);
-      alert('创建失败');
+      console.error('Failed to load model:', error);
     }
   };
 
-  const handleEditModel = (model: DataModel) => {
-    setEditingModel(model);
-    setEditorOpen(true);
+  const handleSelectModel = (modelId: string) => {
+    setSelectedModelId(modelId);
+    setViewMode('crud');
+  };
+
+  const handleOpenDatabase = () => {
+    setDatabaseDialogOpen(true);
+  };
+
+  const handleOpenSettings = () => {
+    setViewMode('settings');
   };
 
   const handleCreateModel = () => {
@@ -40,52 +57,83 @@ export const MainPage: React.FC = () => {
 
   const handleModelSaved = () => {
     setRefreshKey(k => k + 1);
+    loadCurrentModel();
   };
 
-  const handleSelectModel = (modelId: string) => {
-    setSelectedModelId(modelId);
-    setActiveTab('crud');
+  const handleCreateFromDb = async (dbName: string, tableName: string) => {
+    try {
+      const result = await dataModelApi.autoCreateFromDb(dbName, tableName);
+      if (result.code === 0) {
+        alert('模型创建成功');
+        setDatabaseDialogOpen(false);
+        setRefreshKey(k => k + 1);
+      }
+    } catch (error) {
+      console.error('Failed to create model:', error);
+      alert('创建失败');
+    }
   };
 
-  if (selectedModelId && activeTab === 'crud') {
-    return (
-      <CrudDataManager
-        dataModelId={selectedModelId}
-        onBack={() => {
-          setSelectedModelId(null);
-          setActiveTab('model');
-        }}
-      />
-    );
-  }
+  const handleRefresh = () => {
+    setRefreshKey(k => k + 1);
+    loadCurrentModel();
+  };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">数据模型设计器</h1>
-        <p className="text-gray-600">管理数据库、设计数据模型、进行数据操作</p>
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      {/* Left Sidebar */}
+      <Sidebar
+        selectedModelId={selectedModelId}
+        onSelectModel={handleSelectModel}
+        onOpenDatabase={handleOpenDatabase}
+        onOpenSettings={handleOpenSettings}
+        onCreateModel={handleCreateModel}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <Header model={currentModel} onRefresh={handleRefresh} />
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-6">
+          {viewMode === 'crud' && selectedModelId && (
+            <div key={`${selectedModelId}-${refreshKey}`}>
+              <CrudDataManager dataModelId={selectedModelId} />
+            </div>
+          )}
+
+          {viewMode === 'crud' && !selectedModelId && (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center text-gray-500">
+                <p className="text-lg mb-2">请从左侧选择一个数据模型</p>
+                <p className="text-sm">或点击"创建模型"按钮创建新模型</p>
+              </div>
+            </div>
+          )}
+
+          {viewMode === 'settings' && (
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-2xl font-bold mb-4">系统设置</h2>
+                <p className="text-gray-600">设置功能开发中...</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="database">数据库管理</TabsTrigger>
-          <TabsTrigger value="model">数据模型</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="database">
+      {/* Database Dialog */}
+      <Dialog open={databaseDialogOpen} onOpenChange={setDatabaseDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>数据库管理</DialogTitle>
+          </DialogHeader>
           <DatabaseList onTableSelect={handleCreateFromDb} />
-        </TabsContent>
+        </DialogContent>
+      </Dialog>
 
-        <TabsContent value="model">
-          <DataModelList
-            key={refreshKey}
-            onEdit={handleEditModel}
-            onCreate={handleCreateModel}
-            onSelect={handleSelectModel}
-          />
-        </TabsContent>
-      </Tabs>
-
+      {/* Model Editor Dialog */}
       <DataModelEditor
         open={editorOpen}
         onOpenChange={setEditorOpen}

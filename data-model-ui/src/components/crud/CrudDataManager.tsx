@@ -10,10 +10,9 @@ import { Plus, Edit, Trash2, Search, ChevronLeft, ChevronRight } from 'lucide-re
 
 interface CrudDataManagerProps {
   dataModelId: string;
-  onBack?: () => void;
 }
 
-export const CrudDataManager: React.FC<CrudDataManagerProps> = ({ dataModelId, onBack }) => {
+export const CrudDataManager: React.FC<CrudDataManagerProps> = ({ dataModelId }) => {
   const [model, setModel] = useState<DataModel | null>(null);
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
@@ -119,79 +118,86 @@ export const CrudDataManager: React.FC<CrudDataManagerProps> = ({ dataModelId, o
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-6">
+      <Card className="shadow-md">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div>
-              <Button onClick={onBack} variant="outline" size="sm" className="mb-2">
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                返回
-              </Button>
-              <CardTitle>数据管理 - {model?.name || dataModelId}</CardTitle>
-            </div>
-            <Button onClick={handleCreate} size="sm">
+            <CardTitle className="text-lg">数据列表</CardTitle>
+            <Button onClick={handleCreate} size="sm" className="shadow-sm">
               <Plus className="w-4 h-4 mr-2" />
               新增数据
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="mb-4 flex gap-2">
+        <CardContent className="p-6">
+          <div className="mb-6 flex gap-2">
             <Input
-              placeholder="搜索..."
+              placeholder="搜索数据..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="max-w-sm"
+              className="max-w-md"
             />
-            <Button variant="outline">
+            <Button variant="outline" className="shadow-sm">
               <Search className="w-4 h-4" />
             </Button>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {displayColumns.map((col) => (
-                  <TableHead key={col}>{col}</TableHead>
-                ))}
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((item, index) => (
-                <TableRow key={index}>
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
                   {displayColumns.map((col) => (
-                    <TableCell key={col}>
-                      {typeof item[col] === 'object' ? JSON.stringify(item[col]) : String(item[col] || '')}
-                    </TableCell>
+                    <TableHead key={col} className="font-semibold">{col}</TableHead>
                   ))}
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        onClick={() => handleEdit(item)}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        onClick={() => handleDelete(item)}
-                        size="sm"
-                        variant="destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                  <TableHead className="text-right font-semibold">操作</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={displayColumns.length + 1} className="text-center py-12 text-gray-500">
+                      暂无数据
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.map((item, index) => (
+                    <TableRow key={index} className="hover:bg-gray-50">
+                      {displayColumns.map((col) => (
+                        <TableCell key={col} className="max-w-xs truncate">
+                          {typeof item[col] === 'object' ? JSON.stringify(item[col]) : String(item[col] || '-')}
+                        </TableCell>
+                      ))}
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            onClick={() => handleEdit(item)}
+                            size="sm"
+                            variant="outline"
+                            className="shadow-sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(item)}
+                            size="sm"
+                            variant="destructive"
+                            className="shadow-sm"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-          <div className="flex items-center justify-between mt-4">
-            <div className="text-sm text-gray-500">
-              共 {total} 条数据，第 {page} / {totalPages} 页
+          <div className="flex items-center justify-between mt-6">
+            <div className="text-sm text-gray-600">
+              共 <span className="font-medium text-gray-900">{total}</span> 条数据，
+              第 <span className="font-medium text-gray-900">{page}</span> / {totalPages || 1} 页
             </div>
             <div className="flex gap-2">
               <Button
@@ -199,16 +205,20 @@ export const CrudDataManager: React.FC<CrudDataManagerProps> = ({ dataModelId, o
                 disabled={page === 1}
                 size="sm"
                 variant="outline"
+                className="shadow-sm"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                上一页
               </Button>
               <Button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
+                disabled={page === totalPages || totalPages === 0}
                 size="sm"
                 variant="outline"
+                className="shadow-sm"
               >
-                <ChevronRight className="w-4 h-4" />
+                下一页
+                <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
@@ -216,29 +226,34 @@ export const CrudDataManager: React.FC<CrudDataManagerProps> = ({ dataModelId, o
       </Card>
 
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{editingData ? '编辑数据' : '新增数据'}</DialogTitle>
+            <DialogTitle className="text-xl">
+              {editingData ? '编辑数据' : '新增数据'}
+            </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 max-h-96 overflow-y-auto">
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
             {displayColumns.map((col) => (
               <div key={col}>
-                <label className="block text-sm font-medium mb-1">{col}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {col}
+                </label>
                 <Input
                   value={formData[col] || ''}
                   onChange={(e) => setFormData({ ...formData, [col]: e.target.value })}
                   placeholder={`请输入${col}`}
+                  className="w-full"
                 />
               </div>
             ))}
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="shadow-sm">
               取消
             </Button>
-            <Button onClick={handleSave}>
+            <Button onClick={handleSave} className="shadow-sm">
               保存
             </Button>
           </DialogFooter>
