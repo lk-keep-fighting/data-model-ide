@@ -10,6 +10,7 @@ interface SidebarProps {
   onOpenDatabase: () => void;
   onOpenSettings: () => void;
   onCreateModel: () => void;
+  refreshKey?: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -18,6 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenDatabase,
   onOpenSettings,
   onCreateModel,
+  refreshKey,
 }) => {
   const [models, setModels] = useState<DataModel[]>([]);
   const [collapsed, setCollapsed] = useState(false);
@@ -38,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   useEffect(() => {
     loadModels();
-  }, []);
+  }, [refreshKey]);
 
   return (
     <div className={cn(

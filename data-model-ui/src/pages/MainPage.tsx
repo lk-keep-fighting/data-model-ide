@@ -88,6 +88,7 @@ export const MainPage: React.FC = () => {
         onOpenDatabase={handleOpenDatabase}
         onOpenSettings={handleOpenSettings}
         onCreateModel={handleCreateModel}
+        refreshKey={refreshKey}
       />
 
       {/* Main Content */}
@@ -125,11 +126,13 @@ export const MainPage: React.FC = () => {
 
       {/* Database Dialog */}
       <Dialog open={databaseDialogOpen} onOpenChange={setDatabaseDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl h-[85vh]">
           <DialogHeader>
             <DialogTitle>数据库管理</DialogTitle>
           </DialogHeader>
-          <DatabaseList onTableSelect={handleCreateFromDb} />
+          <div className="flex-1 overflow-hidden">
+            <DatabaseList onTableSelect={handleCreateFromDb} />
+          </div>
         </DialogContent>
       </Dialog>
 
